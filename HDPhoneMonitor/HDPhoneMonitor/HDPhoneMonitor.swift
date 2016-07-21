@@ -19,7 +19,7 @@ class Log: Object {
     }
 }
 
-class HDPhoneMonitor: NSObject {
+public class HDPhoneMonitor: NSObject {
     
     class var sharedService: HDPhoneMonitor {
         struct Static {

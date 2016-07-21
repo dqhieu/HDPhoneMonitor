@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HDValue{
+public class HDValue{
     var point:CGPoint = CGPoint()
     
     init(point:CGPoint)

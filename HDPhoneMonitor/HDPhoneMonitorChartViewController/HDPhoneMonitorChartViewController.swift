@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class HDPhoneMonitorChartViewController: UIViewController {
+public class HDPhoneMonitorChartViewController: UIViewController {
     
     var lineChart:HDLineChart!
     var phoneLogs:[Log] = []
@@ -19,7 +19,7 @@ class HDPhoneMonitorChartViewController: UIViewController {
     
     var day: String!
     
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(HDPhoneMonitorChartViewController.viewDidRotated), name: UIDeviceOrientationDidChangeNotification, object: nil)

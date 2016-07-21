@@ -9,7 +9,7 @@
 import UIKit
 import QuartzCore
 
-class HDLineChart: UIView {
+public class HDLineChart: UIView {
     
     public var xLabels: NSArray = []{
         didSet{
