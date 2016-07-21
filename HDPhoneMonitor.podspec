@@ -36,7 +36,7 @@ Pod::Spec.new do |s|
 
   # 7
   s.framework = "UIKit"
-  s.dependency 'RealmSwift', '~> 1.0.2'
+  s.dependency 'RealmSwift'
 
   # 8
   s.source_files = "HDPhoneMonitor/**/*.{swift}"
