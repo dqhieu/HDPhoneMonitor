@@ -27,13 +27,13 @@ pod 'HDPhoneMonitor', :git => 'https://github.com/dqhieu/HDPhoneMonitor.git'
   ```
 
 ### Using
-Put `HDPhoneMonitor.sharedService.log()` in the functions that run every 5 mins or less in both background mode and foreground mode. That mean the service will log your phone battery level and memory usage every 5 mins. You can change the time interval in `HDPhoneMonitor.swift`
+Put `HDPhoneMonitor.sharedService.monitor()` in the functions that run every 5 mins or less in both background mode and foreground mode. That mean the service will log your phone battery level and memory usage every 5 mins. You can change the time interval in `HDPhoneMonitor.swift`
 
   For example:
 
   ```swift
   func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-      HDPhoneMonitor.sharedService.log()
+      HDPhoneMonitor.sharedService.monitor()
       // Your code goes here
       ...
   }
@@ -43,7 +43,7 @@ Put `HDPhoneMonitor.sharedService.log()` in the functions that run every 5 mins 
   // This function runs every 8 seconds when you set notification for `heartBeatCommandReceiverCharacteristic` and send it a command
   func peripheral(peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
       if characteristic.UUID.isEqual(CBUUID(string: BLECharacteristic.HeartBeatSender.rawValue)) {
-        HDPhoneMonitor.sharedService.log()
+        HDPhoneMonitor.sharedService.monitor()
         // Your code goes here
         ...
       }
@@ -51,8 +51,7 @@ Put `HDPhoneMonitor.sharedService.log()` in the functions that run every 5 mins 
   ```
   ```swift
   func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-    HDPhoneMonitor.sharedService.log()
-    //HDPhoneMonitor.deviceDidConnect()
+    HDPhoneMonitor.sharedService.monitor()
     // Your code goes here
     ...
   }

@@ -56,6 +56,8 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         lineChart.lineWidth = 2.0
         
         navigationItem.title = day
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
+        navigationController?.navigationBar.tintColor = UIColor.blackColor()
         // init next and back button
         nextButton = UIButton(frame: CGRect(x: self.view.frame.width - navigationButtonWidth, y: topMargin, width: navigationButtonWidth, height: self.view.frame.height - topMargin - botMargin))
         nextButton.setTitle(">", forState: UIControlState.Normal)
