@@ -39,7 +39,7 @@ Pod::Spec.new do |s|
   s.dependency 'RealmSwift', '~> 1.0.1'
 
   # 8
-  s.source_files = "HDPhoneMonitor/*.{swift}"
+  s.source_files = "HDPhoneMonitor/**/*.{swift}"
 
 
 end
