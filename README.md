@@ -56,13 +56,6 @@ Put `HDPhoneMonitor.sharedService.log()` in the functions that run every 5 mins 
     // Your code goes here
     ...
   }
-
-  func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-    HDPhoneMonitor.sharedService.log()
-    //HDPhoneMonitor.deviceConnectionDidDrop()
-    // Your code goes here
-    ...
-  }
   ```
   ...
 ### Display
@@ -79,7 +72,7 @@ self.navigationController!.pushViewController(phoneMonitorChartViewController, a
 
 ## Requirement
 
-  - [Realm.io](https://realm.io/): We use RealmSwift to save the data and display it into chart. So you need install `pod 'RealmSwift'` if you want to use our service.
+  - [Realm.io](https://realm.io/): We use RealmSwift to save the data and display them into chart. So you need install `pod 'RealmSwift'` if you want to use our service.
 
 ## License
 HDPhoneMonitor is released under the MIT license. See LICENSE for details.

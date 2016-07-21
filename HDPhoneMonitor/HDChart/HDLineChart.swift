@@ -39,9 +39,9 @@ public class HDLineChart: UIView {
             
             yLabelNum = CGFloat(yLabels.count)
             //let yStep:CGFloat = (yValueMax - yValueMin) / CGFloat(yLabelNum)
-            let yStep:CGFloat = 10.0
-            //let yStepHeight:CGFloat  = chartCavanHeight! / CGFloat(yLabelNum)
-            let yStepHeight:CGFloat = chartCavanHeight! / yStep
+            let yStep:CGFloat = 10
+            let yInterval:CGFloat = yValueMax / yStep
+            let yStepHeight:CGFloat  = chartCavanHeight! / CGFloat(yInterval)
             
             var index:CGFloat = 0
             
@@ -397,8 +397,9 @@ public class HDLineChart: UIView {
                 }
                 
                 // draw y axis separator
-                let yStep:CGFloat = 10.0
-                let yStepHeight:CGFloat = chartCavanHeight! / yStep
+                let yStep:CGFloat = 10
+                let yInterval:CGFloat = yValueMax / yStep
+                let yStepHeight:CGFloat  = chartCavanHeight! / CGFloat(yInterval)
                 for i:Int in 0 ..< Int(xValueCount) {
                     point = CGPointMake(chartMargin + yAsixOffset, (chartCavanHeight! - CGFloat(i) * yStepHeight + yLabelHeight/2.0
                     ))

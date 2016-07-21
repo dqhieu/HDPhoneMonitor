@@ -2,13 +2,13 @@ Pod::Spec.new do |s|
 
   # 1
   s.platform = :ios
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '8.0'
   s.name = "HDPhoneMonitor"
   s.summary = "HDPhoneMonitor is a service help monitor your phone"
   s.requires_arc = true
 
   # 2
-  s.version = "0.1.4"
+  s.version = "0.2.0"
 
   # 3
   s.license      = 'MIT'
@@ -36,7 +36,7 @@ Pod::Spec.new do |s|
 
   # 7
   s.framework = "UIKit"
-  s.dependency 'RealmSwift', '~> 1.0.1'
+  s.dependency 'RealmSwift', '~> 1.0.2'
 
   # 8
   s.source_files = "HDPhoneMonitor/**/*.{swift}"
