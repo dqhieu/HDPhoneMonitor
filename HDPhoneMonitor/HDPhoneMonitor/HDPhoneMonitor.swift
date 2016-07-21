@@ -21,7 +21,7 @@ class Log: Object {
 
 public class HDPhoneMonitor: NSObject {
     
-    class var sharedService: HDPhoneMonitor {
+    public class var sharedService: HDPhoneMonitor {
         struct Static {
             static var onceToken: dispatch_once_t = 0
             
@@ -33,32 +33,32 @@ public class HDPhoneMonitor: NSObject {
         return Static.instance!
     }
     
-    let minsPerInterval = 5
-    let userDefault = NSUserDefaults()
+    public let minsPerInterval = 5
+    public let userDefault = NSUserDefaults()
     
-    static func startService() {
+    public static func startService() {
         UIDevice.currentDevice().batteryMonitoringEnabled = true
         let _ = HDPhoneMonitor.sharedService
     }
     
-    static func deviceConnectionDidDrop() {
+    public static func deviceConnectionDidDrop() {
         sharedService.log()
     }
     
-    static func deviceDidConnect() {
+    public static func deviceDidConnect() {
         sharedService.log()
     }
     
-    static func logBatteryLevel() {
+    public static func logBatteryLevel() {
         sharedService.log()
     }
     
-    static func logMemoryUsage() {
+    public static func logMemoryUsage() {
         sharedService.log()
     }
     
     
-    func log() {
+    public func log() {
         let realm = try! Realm()
         let log = Log()
         let date = HDPhoneMonitor.getDate()
@@ -73,13 +73,13 @@ public class HDPhoneMonitor: NSObject {
         }
     }
     
-    static func getDate() -> String {
+    public static func getDate() -> String {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
         return dateFormatter.stringFromDate(NSDate())
     }
     
-    static func getAbsoluteMinInDay() -> Int {
+    public static func getAbsoluteMinInDay() -> Int {
         let midNight = "\(getDate()) 00:00:00"
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
@@ -87,11 +87,11 @@ public class HDPhoneMonitor: NSObject {
         return Int(interval / 60) // second to minute
     }
     
-    func dayIntervalByAbsoluteMin(min: Int) -> Int {
+    public func dayIntervalByAbsoluteMin(min: Int) -> Int {
         return min / minsPerInterval
     }
     
-    static func getMemoryUsage() -> Float {
+    public static func getMemoryUsage() -> Float {
         // constant
         let MACH_TASK_BASIC_INFO_COUNT = (sizeof(mach_task_basic_info_data_t) / sizeof(natural_t))
         

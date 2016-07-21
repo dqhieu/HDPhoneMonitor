@@ -30,7 +30,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         loadData(day)
     }
     
-    func initView() {
+    public func initView() {
         // init chart
         let navigationBarHeight: CGFloat? = self.navigationController?.navigationBar.frame.height
         let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
@@ -67,7 +67,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         self.view.addSubview(backButton)
     }
     
-    func removeView() {
+    public func removeView() {
         if lineChart != nil {
             lineChart.removeFromSuperview()
         }
@@ -79,7 +79,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         }
     }
     
-    func loadData(day: String) {
+    public func loadData(day: String) {
         // load log data from Realm
         let realm = try! Realm()
         let predicate = NSPredicate(format: "date = %@", day)
@@ -151,14 +151,14 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         self.view.addSubview(lineChart)
     }
     
-    func viewDidRotated()
+    public func viewDidRotated()
     {
         removeView()
         initView()
         loadData(day)
     }
     
-    func jumpDay(day: String, daysToJump value:Double) -> String {
+    public func jumpDay(day: String, daysToJump value:Double) -> String {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let d = dateFormatter.dateFromString(day)
@@ -166,7 +166,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         return dateFormatter.stringFromDate(nd!)
     }
     
-    func toNextDay() {
+    public func toNextDay() {
         // date = next date
         day = jumpDay(day, daysToJump: 1)
         print(day)
@@ -177,7 +177,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         loadData(day)
     }
     
-    func toPreviousDay() {
+    public func toPreviousDay() {
         // date  = previous date
         day = jumpDay(day, daysToJump: -1)
         print(day)
