@@ -11,6 +11,7 @@ import QuartzCore
 
 public class HDLineChart: UIView {
     
+    // MARK:- Variables
     public var xLabels: NSArray = []{
         didSet{
             
@@ -67,7 +68,7 @@ public class HDLineChart: UIView {
                 let labelOffset:CGFloat = chartCavanWidth / CGFloat(legends.count) / 3
                 let label: HDChartLabel = HDChartLabel(frame: CGRect(x: labelOffset + CGFloat(index) * (labelWidth + labelOffset), y: chartMargin + chartCavanHeight! + legendHeight, width: labelWidth, height: labelHeight))
                 label.textAlignment = NSTextAlignment.Left
-                label.text = legend as! String
+                label.text = (legend as! String)
                 addSubview(label)
             }
         }
@@ -96,7 +97,6 @@ public class HDLineChart: UIView {
             chartLegendArray = NSMutableArray(capacity: chartData.count)
             
             // set for point stoken
-            let circle_stroke_width:CGFloat = 2.0
             let line_width:CGFloat = lineWidth
             
             for chart : AnyObject in chartData{
@@ -189,7 +189,7 @@ public class HDLineChart: UIView {
     
     // For Axis
     
-    public var axisColor:UIColor = HDGreyColor
+    public var axisColor:UIColor = HDChartColor.GreyColor
     
     public var axisWidth:CGFloat = 1.0
     
@@ -210,10 +210,9 @@ public class HDLineChart: UIView {
     
     var chartPaths: NSMutableArray = []     // Array of line path, one for each line.
     
-    //public var delegate:HDChartDelegate?
     
     
-    // MARK: Functions
+    // MARK:- Functions
     
     func setDefaultValues() {
         backgroundColor = UIColor.whiteColor()
@@ -227,85 +226,7 @@ public class HDLineChart: UIView {
         chartCavanWidth = frame.size.width - (chartMargin * 2.0)
         chartCavanHeight = frame.size.height - (chartMargin * 2.0)
     }
-    
-    public override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        
-        touchPoint(touches, withEvent: event)
-        touchKeyPoint(touches, withEvent: event)
-    }
-    
-    override public func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        
-        touchPoint(touches, withEvent: event)
-        touchKeyPoint(touches, withEvent: event)
-    }
-    
-    func touchPoint(touches: NSSet!, withEvent event: UIEvent!){
-        let touch:UITouch = touches.anyObject() as! UITouch
-        let touchPoint = touch.locationInView(self)
-        
-        for linePoints:AnyObject in pathPoints {
-            let linePointsArray = linePoints as! NSArray
-            
-            for i:NSInteger in 0 ..< (linePointsArray.count - 1){
-                
-                let p1:CGPoint = (linePointsArray[i] as! HDValue).point
-                let p2:CGPoint = (linePointsArray[i+1] as! HDValue).point
-                
-                
-                
-                // Closest distance from point to line
-                var distance:CGFloat = fabs(((p2.x - p1.x) * (touchPoint.y - p1.y)) - ((p1.x - touchPoint.x) * (p1.y - p2.y)))
-                distance =  distance /  hypot( p2.x - p1.x,  p1.y - p2.y )
-                
-                
-                if distance <= 5.0 {
-                    // Conform to delegate parameters, figure out what bezier path this CGPoint belongs to.
-                    
-                    for path : AnyObject in chartPaths {
-                        
-                        let pointContainsPath:Bool = CGPathContainsPoint((path as! UIBezierPath).CGPath, nil, p1, false)
-                        
-                        if pointContainsPath {
-                            
-                            //delegate?.userClickedOnLinePoint(touchPoint , lineIndex: chartPaths.indexOfObject(path))
-                        }
-                    }
-                }
-                
-                
-            }
-            
-            
-        }
-    }
-    
-    
-    func touchKeyPoint(touches: NSSet!, withEvent event: UIEvent!){
-        let touch:UITouch = touches.anyObject() as! UITouch
-        let touchPoint = touch.locationInView(self)
-        
-        for linePoints: AnyObject in pathPoints {
-            let linePointsArray: NSArray = pathPoints as NSArray
-            
-            for i:NSInteger in 0 ..< (linePointsArray.count - 1){
-                let p1:CGPoint = (linePointsArray[i] as! HDValue).point
-                let p2:CGPoint = (linePointsArray[i+1] as! HDValue).point
-                
-                let distanceToP1: CGFloat = fabs( CGFloat( hypot( touchPoint.x - p1.x , touchPoint.y - p1.y ) ))
-                let distanceToP2: CGFloat = hypot( touchPoint.x - p2.x, touchPoint.y - p2.y)
-                
-                let distance: CGFloat = fmin(distanceToP1, distanceToP2)
-                
-                if distance <= 10.0 {
-                    
-                    //delegate?.userClickedOnLineKeyPoint(touchPoint , lineIndex: pathPoints.indexOfObject(linePoints) ,keyPointIndex:(distance == distanceToP2 ? i + 1 : i) )
-                }
-            }
-        }
-        
-    }
-    
+
     /**
      * This method will call and troke the line in animation
      */
@@ -371,7 +292,6 @@ public class HDLineChart: UIView {
                 last_y = yValue!
             }
             
-            let labelHeight:CGFloat = 15
             let labelWidth:CGFloat = chartCavanWidth / CGFloat(legends.count) * 2 / 3
             let labelOffset:CGFloat = chartCavanWidth / CGFloat(legends.count) / 3
             
@@ -389,8 +309,8 @@ public class HDLineChart: UIView {
                 chartLegend.strokeColor = chartData.color.CGColor
             }
             else {
-                chartLine.strokeColor = HDGreenColor.CGColor
-                chartLegend.strokeColor = HDGreenColor.CGColor
+                chartLine.strokeColor = HDChartColor.GreenColor.CGColor
+                chartLegend.strokeColor = HDChartColor.GreenColor.CGColor
             }
             
             progressline.stroke()
@@ -487,46 +407,12 @@ public class HDLineChart: UIView {
                     CGContextStrokePath(ctx)
                 }
             }
-            
-            let font:UIFont = UIFont.systemFontOfSize(11)
-            // draw legends
-            
-            
-            
-            /*
-             // draw y unit
-             if yUnit != nil{
-             let height:CGFloat = heightOfString(yUnit, width: 30.0, font: font)
-             let drawRect:CGRect = CGRectMake(chartMargin + 10 + 5, 0, 30.0, height)
-             drawTextInContext(ctx, text:yUnit, rect:drawRect, font:font)
-             }
-             
-             // draw x unit
-             if xUnit != nil {
-             let height:CGFloat = heightOfString(yUnit, width:30.0, font:font)
-             let drawRect:CGRect = CGRectMake(CGRectGetWidth(rect) - chartMargin + 5, chartMargin + chartCavanHeight! - height/2, 25.0, height)
-             drawTextInContext(ctx, text:yUnit, rect:drawRect, font:font)
-             }*/
         }
         
         super.drawRect(rect)
     }
-    /*
-     func heightOfString(text: NSString, width: CGFloat, font: UIFont) -> CGFloat{
-     let size : CGSize = CGSizeMake(width, CGFloat.max)
-     let rect : CGRect = text.boundingRectWithSize(size, options: NSStringDrawingOptions.UsesFontLeading , attributes: [NSFontAttributeName : font], context: nil)
-     return rect.size.height
-     }
-     
-     func drawTextInContext(ctx: CGContextRef, text: NSString!, rect: CGRect, font:UIFont){
-     let priceParagraphStyle:NSMutableParagraphStyle = NSParagraphStyle.defaultParagraphStyle() as! NSMutableParagraphStyle
-     priceParagraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
-     priceParagraphStyle.alignment = NSTextAlignment.Left
-     
-     text.drawInRect(rect, withAttributes: [ NSParagraphStyleAttributeName:priceParagraphStyle, NSFontAttributeName:font] )
-     }*/
     
-    // MARK: Init
+    // MARK:- Init
     
     override public init(frame: CGRect){
         super.init(frame: frame)

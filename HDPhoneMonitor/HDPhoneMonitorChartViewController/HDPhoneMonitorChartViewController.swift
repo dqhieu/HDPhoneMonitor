@@ -11,6 +11,8 @@ import RealmSwift
 
 public class HDPhoneMonitorChartViewController: UIViewController {
     
+    //MARK:- Variables
+    
     var lineChart:HDLineChart!
     var phoneLogs:[Log] = []
     
@@ -18,6 +20,8 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     var backButton:UIButton!
     
     var day: String!
+    
+    //MARK:- Functions
     
     override public func viewDidLoad() {
         super.viewDidLoad()
@@ -49,20 +53,18 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         lineChart = HDLineChart(frame: CGRectMake(navigationButtonWidth,  topMargin, self.view.frame.width - 2 * navigationButtonWidth, self.view.frame.height - topMargin - botMargin))
         lineChart.showLabel = true
         lineChart.backgroundColor = UIColor.clearColor()
-        lineChart.lineWidth = 2.0
-        //lineChart.legendStyle = HDLegendItemStyleSerial;
-        //lineChart.legendFontSize = 12.0;
+        lineChart.lineWidth = 1.0
         
         navigationItem.title = day
         // init next and back button
         nextButton = UIButton(frame: CGRect(x: self.view.frame.width - navigationButtonWidth, y: topMargin, width: navigationButtonWidth, height: self.view.frame.height - topMargin - botMargin))
         nextButton.setTitle(">", forState: UIControlState.Normal)
-        nextButton.setTitleColor(HDGreenColor, forState: .Normal)
+        nextButton.setTitleColor(HDChartColor.GreenColor, forState: .Normal)
         nextButton.addTarget(self, action: #selector(HDPhoneMonitorChartViewController.toNextDay), forControlEvents: .TouchUpInside)
         self.view.addSubview(nextButton)
         backButton = UIButton(frame: CGRect(x: 0, y: topMargin, width: navigationButtonWidth, height: self.view.frame.height - topMargin - botMargin))
         backButton.setTitle("<", forState: .Normal)
-        backButton.setTitleColor(HDGreenColor, forState: .Normal)
+        backButton.setTitleColor(HDChartColor.GreenColor, forState: .Normal)
         backButton.addTarget(self, action: #selector(HDPhoneMonitorChartViewController.toPreviousDay), forControlEvents: .TouchUpInside)
         self.view.addSubview(backButton)
     }
@@ -119,7 +121,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         
         // load battery data to chart
         let batteryLogData:HDLineChartData = HDLineChartData()
-        batteryLogData.color = HDGreenColor
+        batteryLogData.color = HDChartColor.GreenColor
         batteryLogData.itemCount = phoneLogs.count
         batteryLogData.getData = ({(index: Int) -> HDLineChartDataItem in
             let yValue:CGFloat = CGFloat(self.phoneLogs[index].batteryLevel)
@@ -129,7 +131,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         
         // load memory usage data to chart
         let memoryUsageData:HDLineChartData = HDLineChartData()
-        memoryUsageData.color = HDPurpleColor
+        memoryUsageData.color = HDChartColor.PurpleColor
         memoryUsageData.itemCount = phoneLogs.count
         memoryUsageData.getData = ({(index: Int) -> HDLineChartDataItem in
             let yValue:CGFloat = CGFloat(self.phoneLogs[index].memoryUsage)

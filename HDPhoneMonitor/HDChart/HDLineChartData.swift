@@ -20,7 +20,7 @@ public class HDLineChartDataItem{
 }
 
 
-public  class HDLineChartData{
+public class HDLineChartData{
     public var getData = ({(index: Int) -> HDLineChartDataItem in
         return HDLineChartDataItem()
     })

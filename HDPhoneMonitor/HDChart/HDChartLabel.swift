@@ -13,7 +13,7 @@ public class HDChartLabel: UILabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
         font = UIFont.boldSystemFontOfSize(10.0)
-        textColor = HDGreyColor
+        textColor = HDChartColor.GreyColor
         backgroundColor = UIColor.clearColor()
         textAlignment = NSTextAlignment.Center
         userInteractionEnabled = true
