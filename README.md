@@ -25,12 +25,12 @@ pod 'HDPhoneMonitor', :git => 'https://github.com/dqhieu/HDPhoneMonitor.git'
     return true
   }
   ```
-  
+
 ### Using
 Put `HDPhoneMonitor.sharedService.log()` in the functions that run every 5 mins or less in both background mode and foreground mode. That mean the service will log your phone battery level and memory usage every 5 mins. You can change the time interval in `HDPhoneMonitor.swift`
-  
+
   For example:
-  
+
   ```swift
   func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
       HDPhoneMonitor.sharedService.log()
@@ -40,7 +40,7 @@ Put `HDPhoneMonitor.sharedService.log()` in the functions that run every 5 mins 
   ```
   For periperal devices:
   ```swift
-  // This function run every 8 seconds when you set notification for `heartBeatCommandReceiverCharacteristic` and send it a command
+  // This function runs every 8 seconds when you set notification for `heartBeatCommandReceiverCharacteristic` and send it a command
   func peripheral(peripheral: CBPeripheral, didUpdateNotificationStateForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
       if characteristic.UUID.isEqual(CBUUID(string: BLECharacteristic.HeartBeatSender.rawValue)) {
         HDPhoneMonitor.sharedService.log()
@@ -56,7 +56,7 @@ Put `HDPhoneMonitor.sharedService.log()` in the functions that run every 5 mins 
     // Your code goes here
     ...
   }
-  
+
   func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
     HDPhoneMonitor.sharedService.log()
     //HDPhoneMonitor.deviceConnectionDidDrop()
@@ -70,20 +70,20 @@ Put `HDPhoneMonitor.sharedService.log()` in the functions that run every 5 mins 
 Crate a `UIViewController` and set it custom class `HDPhoneMonitorChartViewController`
 
 ![Imgur](http://i.imgur.com/OkAHv6e.png)
-  
+
 or create by programmatically
 ```swift
-let phoneMonitorViewController = HDPhoneMonitorViewController()
-self.navigationController!.pushViewController(phoneMonitorViewController, animated: true)
+let phoneMonitorChartViewController = HDPhoneMonitorChartViewController()
+self.navigationController!.pushViewController(phoneMonitorChartViewController, animated: true)
 ```
 
 ## Requirement
 
   - [Realm.io](https://realm.io/): We use RealmSwift to save the data and display it into chart. So you need install `pod 'RealmSwift'` if you want to use our service.
-  
+
 ## License
 HDPhoneMonitor is released under the MIT license. See LICENSE for details.
-  
+
 ## SpecialThanks
 
 - [kevinzhow](https://github.com/kevinzhow) for his awesome [PNChart](https://github.com/kevinzhow/PNChart). I did some customizations for better displaying.
