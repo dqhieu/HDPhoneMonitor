@@ -15,7 +15,7 @@ class Log: Object {
     dynamic var date: String = ""
     dynamic var interval: Int = -1
     override static func primaryKey() -> String? {
-        return "interval"
+        return "date"
     }
 }
 
@@ -44,7 +44,7 @@ public class HDPhoneMonitor: NSObject {
         let realm = try! Realm()
         let log = Log()
         let date = HDPhoneMonitor.getDate()
-        let interval  = dayIntervalByAbsoluteMin(HDPhoneMonitor.getAbsoluteMinInDay())
+        let interval  = dayIntervalByMinuteIndex(HDPhoneMonitor.minuteIndex())
         log.date = date
         log.interval = interval
         log.batteryLevel = UIDevice.currentDevice().batteryLevel * 100
@@ -61,7 +61,8 @@ public class HDPhoneMonitor: NSObject {
         return dateFormatter.stringFromDate(NSDate())
     }
     
-    static func getAbsoluteMinInDay() -> Int {
+    // from 0 -> 1439
+    static func minuteIndex() -> Int {
         let midNight = "\(getDate()) 00:00:00"
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
@@ -69,7 +70,8 @@ public class HDPhoneMonitor: NSObject {
         return Int(interval / 60) // second to minute
     }
     
-    func dayIntervalByAbsoluteMin(min: Int) -> Int {
+    
+    func dayIntervalByMinuteIndex(min: Int) -> Int {
         return min / minsPerInterval
     }
     
