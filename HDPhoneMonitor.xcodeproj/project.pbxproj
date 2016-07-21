@@ -8,28 +8,28 @@
 
 /* Begin PBXBuildFile section */
 		12F98228CC6EEDB5AF699E85 /* Pods_HDPhoneMonitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5666F602670A94218D5BDF5E /* Pods_HDPhoneMonitor.framework */; };
+		741DAAB31D407B14008DD26E /* HDChartConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAAAE1D407B14008DD26E /* HDChartConfig.swift */; };
+		741DAAB41D407B14008DD26E /* HDChartLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAAAF1D407B14008DD26E /* HDChartLabel.swift */; };
+		741DAAB51D407B14008DD26E /* HDLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAAB01D407B14008DD26E /* HDLineChart.swift */; };
+		741DAAB61D407B14008DD26E /* HDLineChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAAB11D407B14008DD26E /* HDLineChartData.swift */; };
+		741DAAB71D407B14008DD26E /* HDValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAAB21D407B14008DD26E /* HDValue.swift */; };
+		741DAAB91D407B20008DD26E /* HDPhoneMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAAB81D407B20008DD26E /* HDPhoneMonitor.swift */; };
+		741DAABB1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAABA1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift */; };
 		74578B7F1D3FD1F900B0AAB0 /* HDPhoneMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 74578B7E1D3FD1F900B0AAB0 /* HDPhoneMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		74578B871D3FD26200B0AAB0 /* HDPhoneMonitorChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74578B861D3FD26200B0AAB0 /* HDPhoneMonitorChartViewController.swift */; };
-		74578B891D3FD26700B0AAB0 /* HDPhoneMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74578B881D3FD26700B0AAB0 /* HDPhoneMonitor.swift */; };
-		74578B8F1D3FD26E00B0AAB0 /* HDChartConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74578B8A1D3FD26E00B0AAB0 /* HDChartConfig.swift */; };
-		74578B901D3FD26E00B0AAB0 /* HDChartLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74578B8B1D3FD26E00B0AAB0 /* HDChartLabel.swift */; };
-		74578B911D3FD26E00B0AAB0 /* HDLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74578B8C1D3FD26E00B0AAB0 /* HDLineChart.swift */; };
-		74578B921D3FD26E00B0AAB0 /* HDLineChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74578B8D1D3FD26E00B0AAB0 /* HDLineChartData.swift */; };
-		74578B931D3FD26E00B0AAB0 /* HDValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74578B8E1D3FD26E00B0AAB0 /* HDValue.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5666F602670A94218D5BDF5E /* Pods_HDPhoneMonitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HDPhoneMonitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		741DAAAE1D407B14008DD26E /* HDChartConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDChartConfig.swift; path = HDChart/HDChartConfig.swift; sourceTree = "<group>"; };
+		741DAAAF1D407B14008DD26E /* HDChartLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDChartLabel.swift; path = HDChart/HDChartLabel.swift; sourceTree = "<group>"; };
+		741DAAB01D407B14008DD26E /* HDLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDLineChart.swift; path = HDChart/HDLineChart.swift; sourceTree = "<group>"; };
+		741DAAB11D407B14008DD26E /* HDLineChartData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDLineChartData.swift; path = HDChart/HDLineChartData.swift; sourceTree = "<group>"; };
+		741DAAB21D407B14008DD26E /* HDValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDValue.swift; path = HDChart/HDValue.swift; sourceTree = "<group>"; };
+		741DAAB81D407B20008DD26E /* HDPhoneMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDPhoneMonitor.swift; path = HDPhoneMonitor/HDPhoneMonitor.swift; sourceTree = "<group>"; };
+		741DAABA1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDPhoneMonitorChartViewController.swift; path = HDPhoneMonitorChartViewController/HDPhoneMonitorChartViewController.swift; sourceTree = "<group>"; };
 		74578B7B1D3FD1F900B0AAB0 /* HDPhoneMonitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HDPhoneMonitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		74578B7E1D3FD1F900B0AAB0 /* HDPhoneMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDPhoneMonitor.h; sourceTree = "<group>"; };
 		74578B801D3FD1F900B0AAB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		74578B861D3FD26200B0AAB0 /* HDPhoneMonitorChartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HDPhoneMonitorChartViewController.swift; sourceTree = "<group>"; };
-		74578B881D3FD26700B0AAB0 /* HDPhoneMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HDPhoneMonitor.swift; sourceTree = "<group>"; };
-		74578B8A1D3FD26E00B0AAB0 /* HDChartConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HDChartConfig.swift; sourceTree = "<group>"; };
-		74578B8B1D3FD26E00B0AAB0 /* HDChartLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HDChartLabel.swift; sourceTree = "<group>"; };
-		74578B8C1D3FD26E00B0AAB0 /* HDLineChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HDLineChart.swift; sourceTree = "<group>"; };
-		74578B8D1D3FD26E00B0AAB0 /* HDLineChartData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HDLineChartData.swift; sourceTree = "<group>"; };
-		74578B8E1D3FD26E00B0AAB0 /* HDValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HDValue.swift; sourceTree = "<group>"; };
 		8E6679479EEE0456BECCB72C /* Pods-HDPhoneMonitor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDPhoneMonitor.release.xcconfig"; path = "Pods/Target Support Files/Pods-HDPhoneMonitor/Pods-HDPhoneMonitor.release.xcconfig"; sourceTree = "<group>"; };
 		A1F98193182F1C13B581E639 /* Pods-HDPhoneMonitor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDPhoneMonitor.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HDPhoneMonitor/Pods-HDPhoneMonitor.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -96,7 +96,7 @@
 		74578B941D3FD27E00B0AAB0 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				74578B861D3FD26200B0AAB0 /* HDPhoneMonitorChartViewController.swift */,
+				741DAABA1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -104,7 +104,7 @@
 		74578B951D3FD28400B0AAB0 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				74578B881D3FD26700B0AAB0 /* HDPhoneMonitor.swift */,
+				741DAAB81D407B20008DD26E /* HDPhoneMonitor.swift */,
 			);
 			name = Service;
 			sourceTree = "<group>";
@@ -112,11 +112,11 @@
 		74578B961D3FD28B00B0AAB0 /* HDChart */ = {
 			isa = PBXGroup;
 			children = (
-				74578B8A1D3FD26E00B0AAB0 /* HDChartConfig.swift */,
-				74578B8B1D3FD26E00B0AAB0 /* HDChartLabel.swift */,
-				74578B8C1D3FD26E00B0AAB0 /* HDLineChart.swift */,
-				74578B8D1D3FD26E00B0AAB0 /* HDLineChartData.swift */,
-				74578B8E1D3FD26E00B0AAB0 /* HDValue.swift */,
+				741DAAAE1D407B14008DD26E /* HDChartConfig.swift */,
+				741DAAAF1D407B14008DD26E /* HDChartLabel.swift */,
+				741DAAB01D407B14008DD26E /* HDLineChart.swift */,
+				741DAAB11D407B14008DD26E /* HDLineChartData.swift */,
+				741DAAB21D407B14008DD26E /* HDValue.swift */,
 			);
 			name = HDChart;
 			sourceTree = "<group>";
@@ -235,13 +235,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				74578B8F1D3FD26E00B0AAB0 /* HDChartConfig.swift in Sources */,
-				74578B871D3FD26200B0AAB0 /* HDPhoneMonitorChartViewController.swift in Sources */,
-				74578B911D3FD26E00B0AAB0 /* HDLineChart.swift in Sources */,
-				74578B931D3FD26E00B0AAB0 /* HDValue.swift in Sources */,
-				74578B891D3FD26700B0AAB0 /* HDPhoneMonitor.swift in Sources */,
-				74578B921D3FD26E00B0AAB0 /* HDLineChartData.swift in Sources */,
-				74578B901D3FD26E00B0AAB0 /* HDChartLabel.swift in Sources */,
+				741DAAB71D407B14008DD26E /* HDValue.swift in Sources */,
+				741DAAB91D407B20008DD26E /* HDPhoneMonitor.swift in Sources */,
+				741DAAB61D407B14008DD26E /* HDLineChartData.swift in Sources */,
+				741DAAB31D407B14008DD26E /* HDChartConfig.swift in Sources */,
+				741DAABB1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift in Sources */,
+				741DAAB51D407B14008DD26E /* HDLineChart.swift in Sources */,
+				741DAAB41D407B14008DD26E /* HDChartLabel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

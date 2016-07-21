@@ -47,7 +47,7 @@ class HDLineChart: UIView {
             for _ in yLabels
             {
                 
-                
+                yValueMin = 0.0
                 let labelY = chartCavanHeight - (index * yStepHeight)
                 let label: HDChartLabel = HDChartLabel(frame: CGRect(x: 0.0, y: CGFloat(labelY), width: CGFloat(chartMargin + 5.0), height: CGFloat(yLabelHeight) ) )
                 label.textAlignment = NSTextAlignment.Right

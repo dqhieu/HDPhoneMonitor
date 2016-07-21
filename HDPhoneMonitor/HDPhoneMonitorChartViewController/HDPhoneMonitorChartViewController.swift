@@ -49,7 +49,7 @@ class HDPhoneMonitorChartViewController: UIViewController {
         lineChart = HDLineChart(frame: CGRectMake(navigationButtonWidth,  topMargin, self.view.frame.width - 2 * navigationButtonWidth, self.view.frame.height - topMargin - botMargin))
         lineChart.showLabel = true
         lineChart.backgroundColor = UIColor.clearColor()
-        lineChart.lineWidth = 1.0
+        lineChart.lineWidth = 2.0
         //lineChart.legendStyle = HDLegendItemStyleSerial;
         //lineChart.legendFontSize = 12.0;
         
