@@ -151,7 +151,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         
         let intervals = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
         lineChart.xValueCount = intervals
-        lineChart.xLabels = ["0", "3", "6", "9", "12", "15", "18", "21", "23"]
+        lineChart.xLabels = ["0", "3", "6", "9", "12", "15", "18", "21"]
         
         lineChart.chartData = [batteryLogData, memoryUsageData]
         lineChart.strokeChart()
