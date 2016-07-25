@@ -24,6 +24,18 @@ class MonitoringData: Object {
     }
 }
 
+//MARK: - ConnectionData
+class ConnectionData: Object {
+    //MARK: - Variables
+    dynamic var status: String = ""
+    dynamic var date: NSDate = NSDate()
+    
+    //MARK: - Functions
+    public func interval() -> Int {
+        return HDPhoneMonitor.minuteIndexInDay(date) / HDPhoneMonitor.MINUTES_PER_INTERVAL
+    }
+}
+
 //MARK: - HDPhoneMonitor
 public class HDPhoneMonitor: NSObject {
     
@@ -49,6 +61,7 @@ public class HDPhoneMonitor: NSObject {
     
     let userDefault = NSUserDefaults()
     static var isCharging = false
+    static var connectionDropCount = 0
     
     //MARK: - Functions
     
@@ -62,14 +75,13 @@ public class HDPhoneMonitor: NSObject {
         if userDefault.valueForKey("lastTimeSaved") != nil {
             if let lastTimeSaved = userDefault.valueForKey("lastTimeSaved") as? NSDate {
                 let now = NSDate()
-                if Int(now.timeIntervalSinceDate(lastTimeSaved)) < 5 * 60 {
+                if Int(now.timeIntervalSinceDate(lastTimeSaved)) < 1 * 60 {
                     // Only save data every 5 mins for saving memory space
                     return
                 }
             }
         }
         
-        let realm = try! Realm()
         let data = MonitoringData()
         data.batteryLevel = UIDevice.currentDevice().batteryLevel * 100
         data.memoryUsage = HDPhoneMonitor.getMemoryUsage()
@@ -83,13 +95,29 @@ public class HDPhoneMonitor: NSObject {
         default:
             break
         }
-        
         data.chargingStatus = HDPhoneMonitor.isCharging
         
+        let realm = try! Realm()
         try! realm.write {
             realm.add(data)
             userDefault.setValue(NSDate(), forKey: "lastTimeSaved")
             userDefault.synchronize()
+        }
+    }
+    
+    public func deviceConnectionDidDrop() {
+        saveConnectionData("Disconnected")
+    }
+    
+    public func deviceDidConnect() {
+        saveConnectionData("Connected")
+    }
+    
+    func saveConnectionData(status: String) {
+        let data = ConnectionData(value: ["status": status])
+        let realm = try! Realm()
+        try! realm.write {
+            realm.add(data)
         }
     }
     

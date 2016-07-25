@@ -401,8 +401,7 @@ public class HDLineChart: UIView {
                 let yInterval:CGFloat = yValueMax / yStep
                 let yStepHeight:CGFloat  = chartCavanHeight! / CGFloat(yInterval)
                 for i:Int in 0 ..< Int(xValueCount) {
-                    point = CGPointMake(chartMargin + yAsixOffset, (chartCavanHeight! - CGFloat(i) * yStepHeight + yLabelHeight/2.0
-                    ))
+                    point = CGPointMake(chartMargin + yAsixOffset, (chartCavanHeight! - CGFloat(i) * yStepHeight + yLabelHeight/2.0))
                     CGContextMoveToPoint(ctx, point.x, point.y)
                     CGContextAddLineToPoint(ctx, point.x + 2, point.y)
                     CGContextStrokePath(ctx)

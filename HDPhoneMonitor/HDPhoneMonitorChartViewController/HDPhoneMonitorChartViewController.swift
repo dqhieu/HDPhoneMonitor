@@ -15,6 +15,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     
     var lineChart:HDLineChart!
     var phoneData:[MonitoringData] = []
+    var connectionData:[ConnectionData] = []
     
     var nextButton:UIButton!
     var backButton:UIButton!
@@ -34,7 +35,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         loadData(day)
     }
     
-    public func initView() {
+    func initView() {
         // init chart
         let navigationBarHeight: CGFloat? = self.navigationController?.navigationBar.frame.height
         let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
@@ -71,7 +72,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         self.view.addSubview(backButton)
     }
     
-    public func removeView() {
+    func removeView() {
         if lineChart != nil {
             lineChart.removeFromSuperview()
         }
@@ -83,7 +84,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         }
     }
     
-    public func loadData(day: String) {
+    func loadData(day: String) {
         // load log data from Realm
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
@@ -123,10 +124,18 @@ public class HDPhoneMonitorChartViewController: UIViewController {
             phoneData[log.interval()] = log
         }
         
+        // load connection data
+        let cdata = realm.objects(ConnectionData.self).filter(predicate).sorted("date", ascending: true)
+        if cdata.count > 0 {
+            
+        }
         
+    }
+    
+    func addChart() {
         // load battery data to chart
         let batteryLogData:HDLineChartData = HDLineChartData()
-        batteryLogData.color = HDChartColor.GreenColor
+        batteryLogData.color = HDChartColor.RedColor
         batteryLogData.itemCount = phoneData.count
         batteryLogData.getData = ({(index: Int) -> HDLineChartDataItem in
             let yValue:CGFloat = CGFloat(self.phoneData[index].batteryLevel)
@@ -146,7 +155,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         
         // load battery state to chart
         let chargingData:HDLineChartData = HDLineChartData()
-        chargingData.color = HDChartColor.RedColor
+        chargingData.color = HDChartColor.GreenColor
         chargingData.itemCount = phoneData.count
         chargingData.getData = ({(index: Int) -> HDLineChartDataItem in
             var yValue:CGFloat = -1
@@ -170,14 +179,14 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         self.view.addSubview(lineChart)
     }
     
-    public func viewDidRotated()
+    func viewDidRotated()
     {
         removeView()
         initView()
         loadData(day)
     }
     
-    public func jumpDay(day: String, daysToJump value:Double) -> String {
+    func jumpDay(day: String, daysToJump value:Double) -> String {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
         let d = dateFormatter.dateFromString(day)
@@ -185,7 +194,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         return dateFormatter.stringFromDate(nd!)
     }
     
-    public func toNextDay() {
+    func toNextDay() {
         // date = next date
         day = jumpDay(day, daysToJump: 1)
         print(day)
@@ -196,7 +205,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         loadData(day)
     }
     
-    public func toPreviousDay() {
+    func toPreviousDay() {
         // date  = previous date
         day = jumpDay(day, daysToJump: -1)
         print(day)
