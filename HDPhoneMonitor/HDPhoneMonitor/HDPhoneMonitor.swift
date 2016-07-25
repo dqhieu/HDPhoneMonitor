@@ -9,12 +9,13 @@
 import UIKit
 import RealmSwift
 
-//MARK: - Log
+//MARK: - MonitoringData
 class MonitoringData: Object {
     
     //MARK: - Variables
     dynamic var batteryLevel: Float = -1
     dynamic var memoryUsage: Float = -1
+    dynamic var chargingStatus: Bool = false
     dynamic var date: NSDate = NSDate()
     
     //MARK: - Functions
@@ -47,6 +48,7 @@ public class HDPhoneMonitor: NSObject {
     }
     
     let userDefault = NSUserDefaults()
+    static var isCharging = false
     
     //MARK: - Functions
     
@@ -71,6 +73,18 @@ public class HDPhoneMonitor: NSObject {
         let data = MonitoringData()
         data.batteryLevel = UIDevice.currentDevice().batteryLevel * 100
         data.memoryUsage = HDPhoneMonitor.getMemoryUsage()
+        
+        let state = UIDevice.currentDevice().batteryState
+        switch state {
+        case .Charging:
+            HDPhoneMonitor.isCharging = true
+        case .Unplugged:
+            HDPhoneMonitor.isCharging = false
+        default:
+            break
+        }
+        
+        data.chargingStatus = HDPhoneMonitor.isCharging
         
         try! realm.write {
             realm.add(data)

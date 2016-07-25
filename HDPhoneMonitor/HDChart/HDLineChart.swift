@@ -66,7 +66,7 @@ public class HDLineChart: UIView {
                 let labelHeight:CGFloat = 15
                 let labelWidth:CGFloat = chartCavanWidth / CGFloat(legends.count) * 2 / 3
                 let labelOffset:CGFloat = chartCavanWidth / CGFloat(legends.count) / 3
-                let label: HDChartLabel = HDChartLabel(frame: CGRect(x: labelOffset + CGFloat(index) * (labelWidth + labelOffset), y: chartMargin + chartCavanHeight! + legendHeight, width: labelWidth, height: labelHeight))
+                let label: HDChartLabel = HDChartLabel(frame: CGRect(x: chartMargin + labelOffset + CGFloat(index) * (labelWidth + labelOffset), y: chartMargin + chartCavanHeight! + legendHeight, width: labelWidth, height: labelHeight))
                 label.textAlignment = NSTextAlignment.Left
                 label.text = (legend as! String)
                 addSubview(label)
@@ -295,9 +295,9 @@ public class HDLineChart: UIView {
             let labelWidth:CGFloat = chartCavanWidth / CGFloat(legends.count) * 2 / 3
             let labelOffset:CGFloat = chartCavanWidth / CGFloat(legends.count) / 3
             
-            let x1:CGFloat = CGFloat((lineIndex) * Int(chartCavanWidth!) / legends.count)
+            let x1:CGFloat = chartMargin + CGFloat((lineIndex) * Int(chartCavanWidth!) / legends.count)
             let y1:CGFloat = chartMargin + chartCavanHeight! + legendHeight * 3/2
-            let x2:CGFloat = labelOffset + CGFloat(lineIndex) * (labelWidth + labelOffset) - 10
+            let x2:CGFloat = chartMargin + labelOffset + CGFloat(lineIndex) * (labelWidth + labelOffset) - 10
             let y2:CGFloat = chartMargin + chartCavanHeight! + legendHeight * 3/2
             
             progressLegend.moveToPoint(CGPointMake(CGFloat(x1), CGFloat(y1)))

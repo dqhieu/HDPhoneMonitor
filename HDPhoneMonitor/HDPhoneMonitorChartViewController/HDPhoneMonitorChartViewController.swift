@@ -144,16 +144,27 @@ public class HDPhoneMonitorChartViewController: UIViewController {
             return item
         })
         
-        //
+        // load battery state to chart
+        let chargingData:HDLineChartData = HDLineChartData()
+        chargingData.color = HDChartColor.RedColor
+        chargingData.itemCount = phoneData.count
+        chargingData.getData = ({(index: Int) -> HDLineChartDataItem in
+            var yValue:CGFloat = -1
+            if self.phoneData[index].chargingStatus {
+                yValue = CGFloat(self.phoneData[index].batteryLevel)
+            }
+            let item = HDLineChartDataItem(y: yValue)
+            return item
+        })
         
         lineChart.showLegend = true
-        lineChart.legends = ["Batttery Level (%)", "Memory Usage (MB)"]
+        lineChart.legends = ["Batttery Level (%)", "Memory Usage (MB)", "Charging"]
         
         let intervals = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
         lineChart.xValueCount = intervals
         lineChart.xLabels = ["0", "3", "6", "9", "12", "15", "18", "21"]
         
-        lineChart.chartData = [batteryLogData, memoryUsageData]
+        lineChart.chartData = [batteryLogData, memoryUsageData, chargingData]
         lineChart.strokeChart()
         
         self.view.addSubview(lineChart)
