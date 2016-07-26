@@ -141,17 +141,34 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         phoneData = [MonitoringData](count: endIndex + 1, repeatedValue: MonitoringData())
         isCharging = [Bool](count: endIndex + 1, repeatedValue: false)
         
-        /*
-         for log in data {
-         phoneData[log.interval()] = log
-         }*/
-        
         for index in 0 ..< data.count {
-            phoneData[data[data.count - 1 - index].interval()] = data[data.count - 1 - index]
+            let i = data.count - 1 - index
+            phoneData[data[i].interval()] = data[i]
+            
             if data[index].chargingStatus {
-                isCharging[data[index].interval()] = true
-                if (data[index].interval() + 1) < (endIndex + 1) {
-                    isCharging[data[index].interval() + 1] = true
+                let interval = data[index].interval()
+                isCharging[interval] = true
+            }
+        }
+        
+        //normalizeData()
+        for index in 0 ..< phoneData.count - 1 {
+            if isCharging[index] {
+                if phoneData[index].batteryLevel < phoneData[index + 1].batteryLevel {
+                    isCharging[index + 1] = true
+                }
+            }
+            
+            if phoneData[index].chargingStatus && !phoneData[index + 1].chargingStatus {
+                if phoneData[index].batteryLevel >= phoneData[index + 1].batteryLevel {
+                    let pData = phoneData[index]
+                    phoneData[index] = MonitoringData(
+                        value: [
+                            "date": pData.date,
+                            "batteryLevel": pData.batteryLevel,
+                            "memoryUsage": pData.memoryUsage,
+                            "chargingStatus": false
+                        ])
                 }
             }
         }
