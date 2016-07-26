@@ -43,7 +43,7 @@ public class HDPhoneMonitor: NSObject {
     
     // Replace 5 by value in [5,720] if you want change interval
     // Make sure that 5 is minimum value for best performance and 720 is the max value because 1440/720 = 2 is the minimum number of point to draw graph :)
-    public static let MINUTES_PER_INTERVAL = 5
+    public static let MINUTES_PER_INTERVAL = 30
     
     public static let MAX_MINUTE_A_DAY = 1440
     

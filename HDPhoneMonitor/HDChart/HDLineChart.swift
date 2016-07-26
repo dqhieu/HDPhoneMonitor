@@ -226,7 +226,7 @@ public class HDLineChart: UIView {
         chartCavanWidth = frame.size.width - (chartMargin * 2.0)
         chartCavanHeight = frame.size.height - (chartMargin * 2.0)
     }
-
+    
     /**
      * This method will call and troke the line in animation
      */
@@ -326,11 +326,13 @@ public class HDLineChart: UIView {
             pathAnimation.fromValue = 0.0
             pathAnimation.toValue   = 1.0
             
+            chartLegend.addAnimation(pathAnimation, forKey:"strokeEndAnimation")
+            chartLegend.strokeEnd = 1.0
+            
             chartLine.addAnimation(pathAnimation, forKey:"strokeEndAnimation")
             chartLine.strokeEnd = 1.0
             
-            chartLegend.addAnimation(pathAnimation, forKey:"strokeEndAnimation")
-            chartLegend.strokeEnd = 1.0
+            
             
             CATransaction.commit()
             

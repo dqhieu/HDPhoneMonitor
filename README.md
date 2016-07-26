@@ -2,7 +2,7 @@
 
 HDPhoneMonitor is a service allow you to monitor your phone battery level and app memory usage.
 
-![demo](http://i.imgur.com/O1eODGV.png)
+![demo](http://i.imgur.com/EpYFOc0.png)
 
 ## Installation
 This isn't on CocoaPods yet, so to install, add this to your Podfile
@@ -51,15 +51,23 @@ Put `HDPhoneMonitor.sharedService.monitor()` in the functions that run every 5 m
   ```
   ```swift
   func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-    HDPhoneMonitor.sharedService.monitor()
+    HDPhoneMonitor.sharedService.deviceDidConnect()
+    // Your code goes here
+    ...
+  }
+  ```
+  ```swift
+  func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
+    HDPhoneMonitor.sharedService.deviceConnectionDidDrop()
     // Your code goes here
     ...
   }
   ```
   ...
+
 ### Display
 
-Crate a `UIViewController` and set it custom class `HDPhoneMonitorChartViewController`
+Create a `UIViewController` and set it custom class `HDPhoneMonitorChartViewController`
 
 ![Imgur](http://i.imgur.com/OkAHv6e.png)
 

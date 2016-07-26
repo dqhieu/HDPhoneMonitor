@@ -14,11 +14,15 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     //MARK:- Variables
     
     var lineChart:HDLineChart!
+    var barChart:HDBarChart!
     var phoneData:[MonitoringData] = []
-    var connectionData:[ConnectionData] = []
+    var connectionData:[Int] = []
+    var isCharging:[Bool] = []
     
     var nextButton:UIButton!
     var backButton:UIButton!
+    
+    var noDataLabel:UILabel!
     
     var day: String!
     
@@ -36,6 +40,12 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     }
     
     func initView() {
+        noDataLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 50))
+        noDataLabel.center = self.view.center
+        noDataLabel.text = "No data :("
+        noDataLabel.textColor = HDChartColor.GreyColor
+        noDataLabel.font = UIFont.systemFontOfSize(20)
+        self.view.backgroundColor = UIColor.whiteColor()
         // init chart
         let navigationBarHeight: CGFloat? = self.navigationController?.navigationBar.frame.height
         let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
@@ -53,8 +63,15 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         
         lineChart = HDLineChart(frame: CGRectMake(navigationButtonWidth,  topMargin, self.view.frame.width - 2 * navigationButtonWidth, self.view.frame.height - topMargin - botMargin))
         lineChart.showLabel = true
-        lineChart.backgroundColor = UIColor.whiteColor()
-        lineChart.lineWidth = 2.0
+        lineChart.backgroundColor = UIColor.clearColor()
+        lineChart.lineWidth = 1.0
+        
+        barChart = HDBarChart(frame: CGRectMake(
+            navigationButtonWidth + 2 * lineChart.chartMargin,
+            topMargin,
+            self.view.frame.width - 2 * navigationButtonWidth - 2 * lineChart.chartMargin,
+            (self.view.frame.height - topMargin - botMargin)
+            ))
         
         navigationItem.title = day
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
@@ -82,6 +99,12 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         if backButton != nil {
             backButton.removeFromSuperview()
         }
+        if barChart != nil {
+            barChart.removeFromSuperview()
+        }
+        if noDataLabel != nil {
+            noDataLabel.removeFromSuperview()
+        }
     }
     
     func loadData(day: String) {
@@ -96,10 +119,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         let data = realm.objects(MonitoringData.self).filter(predicate).sorted("date", ascending: true)
         
         if data.count <= 0 {
-            let alert = UIAlertController(title: "No data", message: nil, preferredStyle: .Alert)
-            let actionOk = UIAlertAction(title: "OK", style: .Default, handler: nil)
-            alert.addAction(actionOk)
-            presentViewController(alert, animated: true, completion: nil)
+            self.view.addSubview(noDataLabel)
             return
         }
         
@@ -119,26 +139,62 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         
         phoneData.removeAll()
         phoneData = [MonitoringData](count: endIndex + 1, repeatedValue: MonitoringData())
+        isCharging = [Bool](count: endIndex + 1, repeatedValue: false)
         
-        for log in data {
-            phoneData[log.interval()] = log
+        /*
+         for log in data {
+         phoneData[log.interval()] = log
+         }*/
+        
+        for index in 0 ..< data.count {
+            phoneData[data[data.count - 1 - index].interval()] = data[data.count - 1 - index]
+            if data[index].chargingStatus {
+                isCharging[data[index].interval()] = true
+                if (data[index].interval() + 1) < (endIndex + 1) {
+                    isCharging[data[index].interval() + 1] = true
+                }
+            }
         }
         
         // load connection data
-        let cdata = realm.objects(ConnectionData.self).filter(predicate).sorted("date", ascending: true)
+        let cpredicate = NSPredicate(format: "date >= %@ && date <= %@ && status = 'Disconnected'", startDay, endDay)
+        let cdata = realm.objects(ConnectionData.self).filter(cpredicate).sorted("date", ascending: true)
         if cdata.count > 0 {
             
+            connectionData.removeAll()
+            connectionData = [Int](count: endIndex + 1, repeatedValue: 0)
+            
+            for log in cdata {
+                connectionData[log.interval()] += 1
+            }
+            print(cdata.count)
         }
+        
+        addChart()
         
     }
     
     func addChart() {
+        let intervals = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
+        
+        barChart.backgroundColor = UIColor.clearColor()
+        
+        barChart.labelMarginTop = 0.0
+        barChart.xLabels = [String](count: Int(intervals), repeatedValue: "")
+        barChart.yValues = connectionData
+        barChart.strokeChart()
+        
+        self.view.addSubview(barChart)
+        
         // load battery data to chart
         let batteryLogData:HDLineChartData = HDLineChartData()
         batteryLogData.color = HDChartColor.RedColor
         batteryLogData.itemCount = phoneData.count
         batteryLogData.getData = ({(index: Int) -> HDLineChartDataItem in
-            let yValue:CGFloat = CGFloat(self.phoneData[index].batteryLevel)
+            var yValue:CGFloat = -1
+            if !self.phoneData[index].chargingStatus {
+                yValue = CGFloat(self.phoneData[index].batteryLevel)
+            }
             let item = HDLineChartDataItem(y: yValue)
             return item
         })
@@ -159,7 +215,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         chargingData.itemCount = phoneData.count
         chargingData.getData = ({(index: Int) -> HDLineChartDataItem in
             var yValue:CGFloat = -1
-            if self.phoneData[index].chargingStatus {
+            if self.isCharging[index] {
                 yValue = CGFloat(self.phoneData[index].batteryLevel)
             }
             let item = HDLineChartDataItem(y: yValue)
@@ -167,13 +223,14 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         })
         
         lineChart.showLegend = true
-        lineChart.legends = ["Batttery Level (%)", "Memory Usage (MB)", "Charging"]
+        lineChart.legends = ["Batttery Level (%)", "Charging", "Memory Usage (MB)"]
         
-        let intervals = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
+        
         lineChart.xValueCount = intervals
         lineChart.xLabels = ["0", "3", "6", "9", "12", "15", "18", "21"]
         
-        lineChart.chartData = [batteryLogData, memoryUsageData, chargingData]
+        lineChart.chartData = [batteryLogData, chargingData, memoryUsageData]
+        
         lineChart.strokeChart()
         
         self.view.addSubview(lineChart)

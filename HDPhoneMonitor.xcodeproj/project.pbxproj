@@ -16,6 +16,8 @@
 		741DAAB91D407B20008DD26E /* HDPhoneMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAAB81D407B20008DD26E /* HDPhoneMonitor.swift */; };
 		741DAABB1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741DAABA1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift */; };
 		74578B7F1D3FD1F900B0AAB0 /* HDPhoneMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 74578B7E1D3FD1F900B0AAB0 /* HDPhoneMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		746E5BD61D460B940052650E /* HDBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746E5BD51D460B940052650E /* HDBar.swift */; };
+		746E5BD81D460BC80052650E /* HDBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746E5BD71D460BC80052650E /* HDBarChart.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		74578B7B1D3FD1F900B0AAB0 /* HDPhoneMonitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HDPhoneMonitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		74578B7E1D3FD1F900B0AAB0 /* HDPhoneMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HDPhoneMonitor.h; sourceTree = "<group>"; };
 		74578B801D3FD1F900B0AAB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		746E5BD51D460B940052650E /* HDBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDBar.swift; path = HDChart/HDBar.swift; sourceTree = "<group>"; };
+		746E5BD71D460BC80052650E /* HDBarChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDBarChart.swift; path = HDChart/HDBarChart.swift; sourceTree = "<group>"; };
 		8E6679479EEE0456BECCB72C /* Pods-HDPhoneMonitor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDPhoneMonitor.release.xcconfig"; path = "Pods/Target Support Files/Pods-HDPhoneMonitor/Pods-HDPhoneMonitor.release.xcconfig"; sourceTree = "<group>"; };
 		A1F98193182F1C13B581E639 /* Pods-HDPhoneMonitor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDPhoneMonitor.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HDPhoneMonitor/Pods-HDPhoneMonitor.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -117,6 +121,8 @@
 				741DAAB01D407B14008DD26E /* HDLineChart.swift */,
 				741DAAB11D407B14008DD26E /* HDLineChartData.swift */,
 				741DAAB21D407B14008DD26E /* HDValue.swift */,
+				746E5BD51D460B940052650E /* HDBar.swift */,
+				746E5BD71D460BC80052650E /* HDBarChart.swift */,
 			);
 			name = HDChart;
 			sourceTree = "<group>";
@@ -236,12 +242,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				741DAAB71D407B14008DD26E /* HDValue.swift in Sources */,
+				746E5BD81D460BC80052650E /* HDBarChart.swift in Sources */,
 				741DAAB91D407B20008DD26E /* HDPhoneMonitor.swift in Sources */,
 				741DAAB61D407B14008DD26E /* HDLineChartData.swift in Sources */,
 				741DAAB31D407B14008DD26E /* HDChartConfig.swift in Sources */,
 				741DAABB1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift in Sources */,
 				741DAAB51D407B14008DD26E /* HDLineChart.swift in Sources */,
 				741DAAB41D407B14008DD26E /* HDChartLabel.swift in Sources */,
+				746E5BD61D460B940052650E /* HDBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
