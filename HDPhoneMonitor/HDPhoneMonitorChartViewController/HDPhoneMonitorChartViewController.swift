@@ -427,6 +427,10 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     }
     
     func sync() {
+        if HDPhoneMonitor.sharedService.googleSheetService == nil {
+            return
+        }
+        HDPhoneMonitor.sharedService.delegate = self
         if let auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychainForName(
             HDPhoneMonitor.kKeychainItemName,
             clientID: HDPhoneMonitor.kClientID,
@@ -470,7 +474,8 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         }
         
         HDPhoneMonitor.sharedService.googleSheetService!.authorizer = authResult
-        //dismissViewControllerAnimated(true, completion: nil)
+        dismissViewControllerAnimated(true, completion: nil)
+        self.sync()
     }
     
     // Helper for showing an alert
@@ -488,5 +493,17 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         alert.addAction(ok)
         presentViewController(alert, animated: true, completion: nil)
     }
+    
+}
 
+extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
+    func didSync(object: GTLObject, error: NSError?) {
+        if let error = error {
+            print("--------Error----------")
+            print(error.localizedDescription)
+        }
+        else {
+            print("--------Successfully---------")
+        }
+    }
 }

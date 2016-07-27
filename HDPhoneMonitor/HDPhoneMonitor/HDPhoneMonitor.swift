@@ -73,8 +73,6 @@ public class HDPhoneMonitor: NSObject {
     public var googleSheetService:GTLService?
     let baseUrl = "https://sheets.googleapis.com/v4/spreadsheets"
     var spreadsheetId = ""
-    let monitoringDataRange = "MonitoringData!A1:D1"
-    let connectionDataRange = "ConnectionData!A1:C1"
     
     
     //MARK: - Monitor Functions
@@ -182,9 +180,8 @@ public class HDPhoneMonitor: NSObject {
     
     func sync() {
         
-        let params = ["valueInputOption": "RAW"]
-        
-        let monitorDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, monitoringDataRange), queryParameters: params)
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
         
         let monitoringData:NSMutableDictionary = NSMutableDictionary()
         
@@ -193,22 +190,28 @@ public class HDPhoneMonitor: NSObject {
         let mdata = realm.objects(MonitoringData.self).sorted("date", ascending: true)
         for index in 0 ..< mdata.count {
             let data = mdata[index]
-            let value = [String(data.date) ,String(data.batteryLevel), String(data.chargingStatus), String(data.memoryUsage)]
+            let value = [String(dateFormatter.stringFromDate(data.date)), String(data.batteryLevel), String(data.chargingStatus), String(data.memoryUsage)]
             monitoringValues.append(value)
         }
+        let monitoringDataRange = "MonitoringData!A1:D\(mdata.count + 1)"
         
         
         monitoringData.setValue(monitoringValues, forKey: "values")
         monitoringData.setValue(monitoringDataRange, forKey: "range")
         monitoringData.setValue("ROWS", forKey: "majorDimension")
         
+        let params = ["valueInputOption": "RAW"]
+        
         let object = GTLObject(JSON: monitoringData)
         
-        googleSheetService!.fetchObjectByInsertingObject(object, forURL: monitorDataUrl, delegate: nil, didFinishSelector: nil)
+        let monitorDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, monitoringDataRange), queryParameters: params)
+        
+        
+        googleSheetService!.fetchObjectByUpdatingObject(object, forURL: monitorDataUrl, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displayResultWithTicket(_:finishedWithObject:error:)))
         
         // --------------------------------------------------
         
-        let connectionDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, connectionDataRange), queryParameters: params)
+        
         
         let connectionData:NSMutableDictionary = NSMutableDictionary()
         
@@ -216,10 +219,10 @@ public class HDPhoneMonitor: NSObject {
         let cdata = realm.objects(ConnectionData.self).sorted("date", ascending: true)
         for index in 0 ..< cdata.count {
             let data = cdata[index]
-            let value = [String(data.date) ,String(data.deviceID), String(data.status)]
+            let value = [String(dateFormatter.stringFromDate(data.date)), String(data.deviceID), String(data.status)]
             connectionValues.append(value)
         }
-        
+        let connectionDataRange = "ConnectionData!A1:C\(cdata.count + 1)"
         
         connectionData.setValue(connectionValues, forKey: "values")
         connectionData.setValue(connectionDataRange, forKey: "range")
@@ -227,6 +230,22 @@ public class HDPhoneMonitor: NSObject {
         
         let cobject = GTLObject(JSON: connectionData)
         
-        googleSheetService!.fetchObjectByInsertingObject(cobject, forURL: connectionDataUrl, delegate: nil, didFinishSelector: nil)
+        let connectionDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, connectionDataRange), queryParameters: params)
+        
+        googleSheetService!.fetchObjectByUpdatingObject(cobject, forURL: connectionDataUrl, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displayResultWithTicket(_:finishedWithObject:error:)))
     }
+    
+    weak var delegate:HDPhoneMonitorDelegate?
+    
+    func displayResultWithTicket(ticket: GTLServiceTicket,
+                                 finishedWithObject object : GTLObject,
+                                                    error : NSError?) {
+        delegate?.didSync(object, error: error)
+        
+    }
+    
+}
+
+protocol HDPhoneMonitorDelegate: class {
+    func didSync(object: GTLObject, error: NSError?)
 }
