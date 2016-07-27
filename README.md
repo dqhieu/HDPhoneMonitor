@@ -25,6 +25,22 @@ pod 'HDPhoneMonitor', :git => 'https://github.com/dqhieu/HDPhoneMonitor.git'
     return true
   }
   ```
+3. Enable cloud storage service if you want to save your data on Google Spreadsheet. You must need to enable Google Spreadsheet API service first, follow this [instruction](https://developers.google.com/sheets/quickstart/ios?ver=swift)
+
+  ```swift
+  let keyChainName = "{YOUR_KEY_CHAIN_NAME}"
+  let clientID = "{YOUR_CLIEN_ID}"
+  let spreadSheetID = "{YOUR_SPREADSHEET_ID}"
+  func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    // Override point for customization after application launch.
+    HDPhoneMonitor.startService()
+    HDPhoneMonitor.enableCloudStorage(keyChainName, clientID, spreadSheetID)
+    return true
+  }
+  ```
+
+  Your spreadsheet must have 2 sheets named "MonitoringData" and "ConnectionData", like this:
+  ![sheets](sheets.png)
 
 ### Using
 Put `HDPhoneMonitor.sharedService.monitor()` in the functions that run every 5 mins or less in both background mode and foreground mode. That mean the service will log your phone battery level and memory usage every 5 mins. You can change the time interval in `HDPhoneMonitor.swift`
@@ -51,14 +67,14 @@ Put `HDPhoneMonitor.sharedService.monitor()` in the functions that run every 5 m
   ```
   ```swift
   func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
-    HDPhoneMonitor.sharedService.deviceDidConnect()
+    HDPhoneMonitor.sharedService.deviceDidConnect(getIdFromDevice(peripheral))
     // Your code goes here
     ...
   }
   ```
   ```swift
   func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
-    HDPhoneMonitor.sharedService.deviceConnectionDidDrop()
+    HDPhoneMonitor.sharedService.deviceConnectionDidDrop(getIdFromDevice(peripheral))
     // Your code goes here
     ...
   }
@@ -80,6 +96,9 @@ self.navigationController!.pushViewController(phoneMonitorChartViewController, a
 ## Requirement
 
   - [Realm.io](https://realm.io/): We use RealmSwift to save the data and display them into chart. So you need install `pod 'RealmSwift'` if you want to use our service.
+  - Libraries for Google Sheet API:
+    - Google API Client `pod 'GoogleAPIClient/Core', '~> 1.0.2'`
+    - Google OAuth2 `pod 'GTMOAuth2', '~> 1.1.0'`
 
 ## License
 HDPhoneMonitor is released under the MIT license. See LICENSE for details.
