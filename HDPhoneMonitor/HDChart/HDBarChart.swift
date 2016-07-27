@@ -28,9 +28,8 @@ public class HDBarChart: UIView {
     var yLabels: NSArray = []
     public var yValues: NSArray = [] {
         didSet{
-            yMaxValue = 200
             if (yMaxValue != nil) {
-                yValueMax = yMaxValue
+                yValueMax = yMaxValue * 10
             }else{
                 self.getYValueMax(yValues)
             }
@@ -150,115 +149,6 @@ public class HDBarChart: UIView {
     // MARK: Functions
     
     public  func strokeChart() {
-        self.viewCleanupForCollection(labels)
-        /*
-         if showLabel{
-         //Add x labels
-         var labelAddCount:Int = 0
-         for index:Int in 0 ..< xLabels.count {
-         labelAddCount += 1
-         
-         if labelAddCount == xLabelSkip {
-         let labelText:NSString = xLabels[index] as! NSString
-         let label:HDChartLabel = HDChartLabel(frame: CGRectZero)
-         label.font = labelFont
-         label.textColor = labelTextColor
-         label.textAlignment = NSTextAlignment.Center
-         label.text = labelText as String
-         label.sizeToFit()
-         let labelXPosition:CGFloat  = ( CGFloat(index) *  xLabelWidth + chartMargin + xLabelWidth / 2.0 )
-         
-         label.center = CGPointMake(labelXPosition,
-         self.frame.size.height - xLabelHeight - chartMargin + label.frame.size.height / 2.0 + labelMarginTop)
-         labelAddCount = 0
-         
-         labels.addObject(label)
-         self.addSubview(label)
-         }
-         }
-         
-         //Add y labels
-         
-         let yLabelSectionHeight:CGFloat = (self.frame.size.height - chartMargin * 2.0 - xLabelHeight) / CGFloat(yLabelSum)
-         
-         for index:Int in 0 ..< yLabelSum {
-         let labelText:NSString = yLabelFormatter((yValueMax * ( CGFloat(yLabelSum - index) / CGFloat(yLabelSum) ) ))
-         
-         let label:HDChartLabel = HDChartLabel(frame: CGRectMake(0,yLabelSectionHeight * CGFloat(index) + chartMargin - yLabelHeight/2.0, yChartLabelWidth, yLabelHeight))
-         
-         label.font = labelFont
-         label.textColor = labelTextColor
-         label.textAlignment = NSTextAlignment.Right
-         label.text = labelText as String
-         
-         labels.addObject(label)
-         self.addSubview(label)
-         }
-         }*/
-        
-        self.viewCleanupForCollection(bars)
-        //Add bars
-        let chartCavanHeight:CGFloat = frame.size.height - chartMargin * 2 - xLabelHeight
-        var index:Int = 0
-        
-        for valueObj: AnyObject in yValues{
-            let valueString = valueObj as! NSNumber
-            let value:CGFloat = CGFloat(valueString.floatValue)
-            
-            let grade = value / yValueMax
-            
-            var bar:HDBar!
-            var barXPosition:CGFloat!
-            
-            if barWidth > 0 {
-                
-                barXPosition = CGFloat(index) *  barWidth
-            }else{
-                barWidth = xLabelWidth
-                barXPosition = CGFloat(index) *  barWidth
-            }
-            
-            bar = HDBar(frame: CGRectMake(barXPosition, //Bar X position
-                frame.size.height - chartCavanHeight - xLabelHeight - chartMargin, //Bar Y position
-                barWidth, // Bar witdh
-                chartCavanHeight)) //Bar height
-            
-            //Change Bar Radius
-            bar.barRadius = barRadius
-            
-            //Change Bar Background color
-            bar.backgroundColor = barBackgroundColor
-            
-            //Bar StrokColor First
-            if strokeColor != UIColor.blackColor() {
-                bar.barColor = strokeColor
-            }else{
-                bar.barColor = self.barColorAtIndex(index)
-            }
-            
-            if(self.animationType ==  .Waterfall)
-            {
-                let indexDouble : Double = Double(index)
-                
-                // Time before each bar starts animating
-                let barStartTime = indexDouble-(0.9*indexDouble)
-                
-                bar.startAnimationTime = barStartTime
-                
-            }
-            
-            //Height Of Bar
-            bar.grade = grade
-            
-            //For Click Index
-            bar.tag = index
-            
-            bars.addObject(bar)
-            addSubview(bar)
-            
-            index += 1
-        }
-        
         //Add chart border lines
         
         if showChartBorder{
@@ -324,6 +214,89 @@ public class HDBarChart: UIView {
             layer.addSublayer(chartLeftLine)
         }
         
+        self.viewCleanupForCollection(labels)
+        self.viewCleanupForCollection(bars)
+        //Add bars
+        let chartCavanHeight:CGFloat = frame.size.height - chartMargin * 2 - xLabelHeight
+        var index:Int = 0
+        
+        for valueObj: AnyObject in yValues{
+            let valueString = valueObj as! NSNumber
+            let value:CGFloat = CGFloat(valueString.floatValue)
+            
+            if value == 0 {
+                index += 1
+                continue
+            }
+            
+            let grade = value / yValueMax
+            
+            var bar:HDBar!
+            var barXPosition:CGFloat!
+            
+            if barWidth > 0 {
+                
+                barXPosition = CGFloat(index) *  barWidth
+            }else{
+                barWidth = xLabelWidth
+                barXPosition = CGFloat(index) *  barWidth
+            }
+            
+            bar = HDBar(frame: CGRectMake(barXPosition, //Bar X position
+                frame.size.height - chartCavanHeight - xLabelHeight - chartMargin, //Bar Y position
+                barWidth, // Bar witdh
+                chartCavanHeight)) //Bar height
+            
+            //Change Bar Radius
+            bar.barRadius = barRadius
+            
+            //Change Bar Background color
+            bar.backgroundColor = barBackgroundColor
+            
+            //Bar StrokColor First
+            if strokeColor != UIColor.blackColor() {
+                bar.barColor = strokeColor
+            }else{
+                bar.barColor = self.barColorAtIndex(index)
+            }
+            
+            if(self.animationType ==  .Waterfall)
+            {
+                let indexDouble : Double = Double(index)
+                
+                // Time before each bar starts animating
+                let barStartTime = indexDouble-(0.9*indexDouble)
+                
+                bar.startAnimationTime = barStartTime
+                
+            }
+            
+            //Height Of Bar
+            bar.grade = grade
+            
+            //For Click Index
+            bar.tag = index
+            
+            bars.addObject(bar)
+            addSubview(bar)
+            
+            //Add label
+            let labelText = String(yValues[index] as! Int)
+            let label = HDChartLabel(frame: CGRectZero)
+            label.font = labelFont
+            label.textColor = labelTextColor
+            label.textAlignment = .Center
+            label.text = labelText
+            label.sizeToFit()
+            let labelXPosition:CGFloat = ( CGFloat(index) *  xLabelWidth + xLabelWidth / 2.0 )
+            let labelYPosistion:CGFloat = self.frame.size.height - xLabelHeight - chartMargin - bar.grade * bar.frame.height - label.frame.height / 2
+            label.center = CGPointMake(labelXPosition, labelYPosistion )
+            self.addSubview(label)
+            labels.addObject(label)
+            
+            index += 1
+        }
+        
     }
     
     func barColorAtIndex(index:Int) -> UIColor
@@ -356,7 +329,7 @@ public class HDBarChart: UIView {
         if max == 0 {
             yValueMax = yMinValue
         }else{
-            yValueMax = max
+            yValueMax = max * 10
         }
         
     }
