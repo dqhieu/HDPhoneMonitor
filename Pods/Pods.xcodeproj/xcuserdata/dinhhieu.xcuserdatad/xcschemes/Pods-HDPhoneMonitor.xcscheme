@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "41A6769D7F45271CA8F1C69FC6781BE6"
+               BlueprintIdentifier = "C49F336EF48261768331FA66A01327C3"
                BuildableName = "Pods_HDPhoneMonitor.framework"
                BlueprintName = "Pods-HDPhoneMonitor"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "41A6769D7F45271CA8F1C69FC6781BE6"
+            BlueprintIdentifier = "C49F336EF48261768331FA66A01327C3"
             BuildableName = "Pods_HDPhoneMonitor.framework"
             BlueprintName = "Pods-HDPhoneMonitor"
             ReferencedContainer = "container:Pods.xcodeproj">

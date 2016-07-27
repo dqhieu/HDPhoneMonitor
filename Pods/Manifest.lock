@@ -1,4 +1,13 @@
 PODS:
+  - GoogleAPIClient/Core (1.0.4):
+    - GTMSessionFetcher (~> 1.1)
+  - GTMOAuth2 (1.1.1):
+    - GTMSessionFetcher (~> 1.1)
+  - GTMSessionFetcher (1.1.4):
+    - GTMSessionFetcher/Full (= 1.1.4)
+  - GTMSessionFetcher/Core (1.1.4)
+  - GTMSessionFetcher/Full (1.1.4):
+    - GTMSessionFetcher/Core (= 1.1.4)
   - Realm (1.0.2):
     - Realm/Headers (= 1.0.2)
   - Realm/Headers (1.0.2)
@@ -6,12 +15,17 @@ PODS:
     - Realm (= 1.0.2)
 
 DEPENDENCIES:
+  - GoogleAPIClient/Core (~> 1.0.2)
+  - GTMOAuth2 (~> 1.1.0)
   - RealmSwift
 
 SPEC CHECKSUMS:
+  GoogleAPIClient: 4dedb6af613eb7d171814c343f8a82ee5411e13b
+  GTMOAuth2: bdb12f3e0d2110bfe585f6151230b883beb4d042
+  GTMSessionFetcher: 174bc61d5238f81f9ddb807b0b0170420f67de85
   Realm: 9d5c46a4d7d27958530a8dfc58f63a99e5c2cba3
   RealmSwift: 82f3ac5e24530143dddfde2033acc0d308f27d96
 
-PODFILE CHECKSUM: 39dae67c3643f783e8309fd2c41f17f12f7ac830
+PODFILE CHECKSUM: 20d652d5031f62b5ce03d593d79332e3af2e9b92
 
 COCOAPODS: 1.0.1

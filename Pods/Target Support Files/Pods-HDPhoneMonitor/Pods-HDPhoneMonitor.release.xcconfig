@@ -1,9 +1,9 @@
 EMBEDDED_CONTENT_CONTAINS_SWIFT = YES
-FRAMEWORK_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/Realm" "$PODS_CONFIGURATION_BUILD_DIR/RealmSwift"
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+FRAMEWORK_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/GTMOAuth2" "$PODS_CONFIGURATION_BUILD_DIR/GTMSessionFetcher" "$PODS_CONFIGURATION_BUILD_DIR/GoogleAPIClient" "$PODS_CONFIGURATION_BUILD_DIR/Realm" "$PODS_CONFIGURATION_BUILD_DIR/RealmSwift"
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 $(inherited) GTM_OAUTH2_USE_FRAMEWORK_IMPORTS=1 $(inherited) GTL_USE_FRAMEWORK_IMPORTS=1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
-OTHER_CFLAGS = $(inherited) -iquote "$PODS_CONFIGURATION_BUILD_DIR/Realm/Realm.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/RealmSwift/RealmSwift.framework/Headers"
-OTHER_LDFLAGS = $(inherited) -ObjC -framework "Realm" -framework "RealmSwift"
+OTHER_CFLAGS = $(inherited) -iquote "$PODS_CONFIGURATION_BUILD_DIR/GTMOAuth2/GTMOAuth2.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/GTMSessionFetcher/GTMSessionFetcher.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/GoogleAPIClient/GoogleAPIClient.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/Realm/Realm.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/RealmSwift/RealmSwift.framework/Headers"
+OTHER_LDFLAGS = $(inherited) -ObjC -framework "GTMOAuth2" -framework "GTMSessionFetcher" -framework "GoogleAPIClient" -framework "Realm" -framework "RealmSwift"
 OTHER_SWIFT_FLAGS = $(inherited) "-D" "COCOAPODS"
 PODS_BUILD_DIR = $BUILD_DIR
 PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)

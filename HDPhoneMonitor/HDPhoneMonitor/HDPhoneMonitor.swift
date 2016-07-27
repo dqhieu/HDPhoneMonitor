@@ -8,6 +8,8 @@
 
 import UIKit
 import RealmSwift
+import GoogleAPIClient
+import GTMOAuth2
 
 //MARK: - MonitoringData
 class MonitoringData: Object {
@@ -28,6 +30,7 @@ class MonitoringData: Object {
 class ConnectionData: Object {
     //MARK: - Variables
     dynamic var status: String = ""
+    dynamic var deviceID: String = ""
     dynamic var date: NSDate = NSDate()
     
     //MARK: - Functions
@@ -39,7 +42,7 @@ class ConnectionData: Object {
 //MARK: - HDPhoneMonitor
 public class HDPhoneMonitor: NSObject {
     
-    //MARK: - Variables
+    //MARK: - Monitor Variables
     
     // Replace 5 by value in [5,720] if you want change interval
     // Make sure that 5 is minimum value for best performance and 720 is the max value because 1440/720 = 2 is the minimum number of point to draw graph :)
@@ -63,7 +66,18 @@ public class HDPhoneMonitor: NSObject {
     static var isCharging = false
     static var connectionDropCount = 0
     
-    //MARK: - Functions
+    //MARK: - Google Sheet API Variables
+    public static var kKeychainItemName = ""
+    public static var kClientID = ""
+    public static let scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+    public var googleSheetService:GTLService?
+    let baseUrl = "https://sheets.googleapis.com/v4/spreadsheets"
+    var spreadsheetId = ""
+    let monitoringDataRange = "MonitoringData!A1:D1"
+    let connectionDataRange = "ConnectionData!A1:C1"
+    
+    
+    //MARK: - Monitor Functions
     
     public static func startService() {
         UIDevice.currentDevice().batteryMonitoringEnabled = true
@@ -105,16 +119,16 @@ public class HDPhoneMonitor: NSObject {
         }
     }
     
-    public func deviceConnectionDidDrop() {
-        saveConnectionData("Disconnected")
+    public func deviceConnectionDidDrop(deviceID: String) {
+        saveConnectionData(deviceID, status: "Disconnected")
     }
     
-    public func deviceDidConnect() {
-        saveConnectionData("Connected")
+    public func deviceDidConnect(deviceID: String) {
+        saveConnectionData(deviceID, status: "Connected")
     }
     
-    func saveConnectionData(status: String) {
-        let data = ConnectionData(value: ["status": status])
+    func saveConnectionData(deviceID:String, status: String) {
+        let data = ConnectionData(value: ["status": status, "deviceID": deviceID])
         let realm = try! Realm()
         try! realm.write {
             realm.add(data)
@@ -156,5 +170,63 @@ public class HDPhoneMonitor: NSObject {
         } else {
             return -1
         }
+    }
+    
+    //MARK: - Google Sheet API Functions
+    public static func enableCloudStorage(keyChain keychainItemName: String, clientID: String, spreadSheetID: String) {
+        sharedService.googleSheetService = GTLService()
+        kKeychainItemName = keychainItemName
+        kClientID = clientID
+        sharedService.spreadsheetId = spreadSheetID
+    }
+    
+    func sync() {
+        
+        let params = ["valueInputOption": "RAW"]
+        
+        let monitorDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, monitoringDataRange), queryParameters: params)
+        
+        let monitoringData:NSMutableDictionary = NSMutableDictionary()
+        
+        var monitoringValues = [["Date", "BatteryLevel", "Is Charging", "Memory Usage"]]
+        let realm = try! Realm()
+        let mdata = realm.objects(MonitoringData.self).sorted("date", ascending: true)
+        for index in 0 ..< mdata.count {
+            let data = mdata[index]
+            let value = [String(data.date) ,String(data.batteryLevel), String(data.chargingStatus), String(data.memoryUsage)]
+            monitoringValues.append(value)
+        }
+        
+        
+        monitoringData.setValue(monitoringValues, forKey: "values")
+        monitoringData.setValue(monitoringDataRange, forKey: "range")
+        monitoringData.setValue("ROWS", forKey: "majorDimension")
+        
+        let object = GTLObject(JSON: monitoringData)
+        
+        googleSheetService!.fetchObjectByInsertingObject(object, forURL: monitorDataUrl, delegate: nil, didFinishSelector: nil)
+        
+        // --------------------------------------------------
+        
+        let connectionDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, connectionDataRange), queryParameters: params)
+        
+        let connectionData:NSMutableDictionary = NSMutableDictionary()
+        
+        var connectionValues = [["Date", "DeviceID", "Status"]]
+        let cdata = realm.objects(ConnectionData.self).sorted("date", ascending: true)
+        for index in 0 ..< cdata.count {
+            let data = cdata[index]
+            let value = [String(data.date) ,String(data.deviceID), String(data.status)]
+            connectionValues.append(value)
+        }
+        
+        
+        connectionData.setValue(connectionValues, forKey: "values")
+        connectionData.setValue(connectionDataRange, forKey: "range")
+        connectionData.setValue("ROWS", forKey: "majorDimension")
+        
+        let cobject = GTLObject(JSON: connectionData)
+        
+        googleSheetService!.fetchObjectByInsertingObject(cobject, forURL: connectionDataUrl, delegate: nil, didFinishSelector: nil)
     }
 }

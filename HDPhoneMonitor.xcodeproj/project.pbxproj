@@ -18,6 +18,7 @@
 		74578B7F1D3FD1F900B0AAB0 /* HDPhoneMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 74578B7E1D3FD1F900B0AAB0 /* HDPhoneMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		746E5BD61D460B940052650E /* HDBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746E5BD51D460B940052650E /* HDBar.swift */; };
 		746E5BD81D460BC80052650E /* HDBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746E5BD71D460BC80052650E /* HDBarChart.swift */; };
+		74CFEC491D48A644004AE125 /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 74CFEC481D48A644004AE125 /* GTMOAuth2ViewTouch.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		74578B801D3FD1F900B0AAB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		746E5BD51D460B940052650E /* HDBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDBar.swift; path = HDChart/HDBar.swift; sourceTree = "<group>"; };
 		746E5BD71D460BC80052650E /* HDBarChart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDBarChart.swift; path = HDChart/HDBarChart.swift; sourceTree = "<group>"; };
+		74CFEC481D48A644004AE125 /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GTMOAuth2ViewTouch.xib; sourceTree = "<group>"; };
 		8E6679479EEE0456BECCB72C /* Pods-HDPhoneMonitor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDPhoneMonitor.release.xcconfig"; path = "Pods/Target Support Files/Pods-HDPhoneMonitor/Pods-HDPhoneMonitor.release.xcconfig"; sourceTree = "<group>"; };
 		A1F98193182F1C13B581E639 /* Pods-HDPhoneMonitor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDPhoneMonitor.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HDPhoneMonitor/Pods-HDPhoneMonitor.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -101,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				741DAABA1D407B26008DD26E /* HDPhoneMonitorChartViewController.swift */,
+				74CFEC481D48A644004AE125 /* GTMOAuth2ViewTouch.xib */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -198,6 +201,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74CFEC491D48A644004AE125 /* GTMOAuth2ViewTouch.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

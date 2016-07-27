@@ -8,6 +8,8 @@
 
 import UIKit
 import RealmSwift
+import GoogleAPIClient
+import GTMOAuth2
 
 public class HDPhoneMonitorChartViewController: UIViewController {
     
@@ -425,6 +427,66 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     }
     
     func sync() {
+        if let auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychainForName(
+            HDPhoneMonitor.kKeychainItemName,
+            clientID: HDPhoneMonitor.kClientID,
+            clientSecret: nil) {
+            HDPhoneMonitor.sharedService.googleSheetService!.authorizer = auth
+        }
+        if let authorizer = HDPhoneMonitor.sharedService.googleSheetService!.authorizer,
+            canAuth = authorizer.canAuthorize where canAuth {
+            HDPhoneMonitor.sharedService.sync()
+        } else {
+            presentViewController(
+                createAuthController(),
+                animated: true,
+                completion: nil
+            )
+        }
         
     }
+    
+    private func createAuthController() -> GTMOAuth2ViewControllerTouch {
+        let scopeString = HDPhoneMonitor.scopes.joinWithSeparator(" ")
+        return GTMOAuth2ViewControllerTouch(
+            scope: scopeString,
+            clientID: HDPhoneMonitor.kClientID,
+            clientSecret: nil,
+            keychainItemName: HDPhoneMonitor.kKeychainItemName,
+            delegate: self,
+            finishedSelector: #selector(HDPhoneMonitorChartViewController.viewController(_:finishedWithAuth:error:))
+        )
+    }
+    
+    // Handle completion of the authorization process, and update the Google Sheets API
+    // with the new credentials.
+    func viewController(vc : UIViewController,
+                        finishedWithAuth authResult : GTMOAuth2Authentication, error : NSError?) {
+        
+        if let error = error {
+            HDPhoneMonitor.sharedService.googleSheetService!.authorizer = nil
+            showAlert("Authentication Error", message: error.localizedDescription)
+            return
+        }
+        
+        HDPhoneMonitor.sharedService.googleSheetService!.authorizer = authResult
+        //dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    // Helper for showing an alert
+    func showAlert(title : String, message: String) {
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: UIAlertControllerStyle.Alert
+        )
+        let ok = UIAlertAction(
+            title: "OK",
+            style: UIAlertActionStyle.Default,
+            handler: nil
+        )
+        alert.addAction(ok)
+        presentViewController(alert, animated: true, completion: nil)
+    }
+
 }

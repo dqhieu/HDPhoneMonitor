@@ -4,6 +4,21 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>GTMOAuth2.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>GTMSessionFetcher.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>GoogleAPIClient.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-HDPhoneMonitor.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -22,17 +37,32 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>41A6769D7F45271CA8F1C69FC6781BE6</key>
+		<key>236B0087BFA2A7C367DDD9C481F99ECE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>7BC801C44E958D56555140717236C60E</key>
+		<key>78156649B19A4FEF8D2ACADA95DCD8DC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>CAFE3EFE1E099FB94E6E4B07EB11B3E6</key>
+		<key>BE44CA0945E26A5CFA14056C7ACB871D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C49F336EF48261768331FA66A01327C3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D1EB283B1C460BA99EBC263D469ECD25</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D468777BEC2DE5127A16239373FFD11F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
