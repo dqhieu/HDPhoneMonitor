@@ -21,10 +21,26 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     
     var nextButton:UIButton!
     var backButton:UIButton!
-    
     var noDataLabel:UILabel!
     
     var day: String!
+    
+    var navigationBarHeight: CGFloat    = 0
+    var statusBarHeight: CGFloat        = 0
+    var tabBarHeight: CGFloat           = 0
+    var topMargin:CGFloat               = 0
+    var botMargin:CGFloat               = 0
+    var chartMargin:CGFloat             = 0
+    var chartLeftMargin:CGFloat         = 20
+    
+    var maxInterval:Int = -1
+    let INTERVALS = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
+    
+    let userDefault = NSUserDefaults()
+    
+    var isShowConnectionChart = false
+    
+    var settingsView: UIAlertController!
     
     //MARK:- Functions
     
@@ -34,49 +50,36 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(HDPhoneMonitorChartViewController.viewDidRotated), name: UIDeviceOrientationDidChangeNotification, object: nil)
         
         day = HDPhoneMonitor.getDayString(NSDate())
-        
+        initVariable()
+        initControls()
         initView()
         loadData(day)
     }
     
-    func initView() {
-        noDataLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 50))
-        noDataLabel.center = self.view.center
-        noDataLabel.text = "No data :("
-        noDataLabel.textColor = HDChartColor.GreyColor
-        noDataLabel.font = UIFont.systemFontOfSize(20)
-        self.view.backgroundColor = UIColor.whiteColor()
-        // init chart
-        let navigationBarHeight: CGFloat? = self.navigationController?.navigationBar.frame.height
-        let statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
-        let tabBarHeight: CGFloat? = self.tabBarController?.tabBar.frame.height
-        var topMargin:CGFloat = 0
-        if navigationBarHeight != nil {
-            topMargin = navigationBarHeight! + statusBarHeight
+    func initVariable() {
+        if self.navigationController?.navigationBar.frame.height != nil {
+            navigationBarHeight = (self.navigationController?.navigationBar.frame.height)!
         }
-        var botMargin:CGFloat = 0
-        if tabBarHeight != nil {
-            botMargin = tabBarHeight!
+        statusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
+        if self.tabBarController?.tabBar.frame.height != nil {
+            tabBarHeight = (self.tabBarController?.tabBar.frame.height)!
         }
+        topMargin = navigationBarHeight + statusBarHeight
+        botMargin = tabBarHeight
         
-        let navigationButtonWidth:CGFloat = 20
-        
-        lineChart = HDLineChart(frame: CGRectMake(navigationButtonWidth,  topMargin, self.view.frame.width - 2 * navigationButtonWidth, self.view.frame.height - topMargin - botMargin))
-        lineChart.showLabel = true
-        lineChart.backgroundColor = UIColor.clearColor()
-        lineChart.lineWidth = 1.0
-        
-        barChart = HDBarChart(frame: CGRectMake(
-            navigationButtonWidth + 2 * lineChart.chartMargin,
-            topMargin,
-            self.view.frame.width - 2 * navigationButtonWidth - 2 * lineChart.chartMargin,
-            (self.view.frame.height - topMargin - botMargin)
-            ))
-        
+        if userDefault.valueForKey("isShowConnectionChart") != nil {
+            isShowConnectionChart = userDefault.valueForKey("isShowConnectionChart") as! Bool
+        }
+    }
+    
+    func initControls() {
+        // Navigation bar
         navigationItem.title = day
         navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.blackColor()]
         navigationController?.navigationBar.tintColor = UIColor.blackColor()
+        
         // init next and back button
+        let navigationButtonWidth:CGFloat = chartLeftMargin
         nextButton = UIButton(frame: CGRect(x: self.view.frame.width - navigationButtonWidth, y: topMargin, width: navigationButtonWidth, height: self.view.frame.height - topMargin - botMargin))
         nextButton.setTitle(">", forState: UIControlState.Normal)
         nextButton.setTitleColor(HDChartColor.GreenColor, forState: .Normal)
@@ -87,28 +90,115 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         backButton.setTitleColor(HDChartColor.GreenColor, forState: .Normal)
         backButton.addTarget(self, action: #selector(HDPhoneMonitorChartViewController.toPreviousDay), forControlEvents: .TouchUpInside)
         self.view.addSubview(backButton)
+        
+        // No data label
+        noDataLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 50))
+        noDataLabel.center = self.view.center
+        noDataLabel.text = "No data :("
+        noDataLabel.textColor = HDChartColor.GreyColor
+        noDataLabel.font = UIFont.systemFontOfSize(20)
+        self.view.backgroundColor = UIColor.whiteColor()
+        
+        // Setting button
+        let settingsButton = UIBarButtonItem(title: "Settings", style: .Plain, target: self, action: #selector(HDPhoneMonitorChartViewController.onSettingsPressed))
+        self.navigationItem.rightBarButtonItem = settingsButton
+    }
+    
+    func onSettingsPressed() {
+        presentViewController(settingsView, animated: true, completion: nil)
+    }
+    
+    func initBatteryChartView() {
+        lineChart = HDLineChart(frame: CGRectMake(
+            chartLeftMargin,
+            topMargin,
+            self.view.frame.width - 2 * chartLeftMargin,
+            self.view.frame.height - topMargin - botMargin
+            ))
+        lineChart.showLabel = true
+        lineChart.backgroundColor = UIColor.clearColor()
+        lineChart.lineWidth = 1.0
+    }
+    
+    func initConnectionChartView() {
+        if !isShowConnectionChart {
+            return
+        }
+        
+        barChart = HDBarChart(frame: CGRectMake(
+            chartLeftMargin + 2 * lineChart.chartMargin,
+            topMargin,
+            self.view.frame.width - 2 * chartLeftMargin - 2 * lineChart.chartMargin,
+            (self.view.frame.height - topMargin - botMargin)
+            ))
+    }
+    
+    func initSettingsView() {
+        settingsView = UIAlertController(title: "Settings", message: nil, preferredStyle: .ActionSheet)
+        let actionShowConnectionChart = UIAlertAction(title: "Show drop out chart", style: .Default) { (action: UIAlertAction) in
+            self.showConnectionChart()
+        }
+        let actionHideConnectionChart = UIAlertAction(title: "Hide drop out chart", style: .Default) { (action: UIAlertAction) in
+            self.hideConnectionChart()
+        }
+        let actionSync = UIAlertAction(title: "Sync to Google Sheet", style: .Default) { (action: UIAlertAction) in
+            self.sync()
+        }
+        let actionCancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+        if isShowConnectionChart {
+            settingsView.addAction(actionHideConnectionChart)
+        }
+        else {
+            settingsView.addAction(actionShowConnectionChart)
+        }
+        settingsView.addAction(actionSync)
+        settingsView.addAction(actionCancel)
+    }
+    
+    func initView() {
+        // init chart
+        initSettingsView()
+        initBatteryChartView()
+        initConnectionChartView()
     }
     
     func removeView() {
+        removeBatteryChart()
+        removeConnectionChart()
+        removeControls()
+    }
+    
+    func clearData() {
+        phoneData.removeAll()
+        connectionData.removeAll()
+        isCharging.removeAll()
+    }
+    
+    func removeBatteryChart() {
         if lineChart != nil {
             lineChart.removeFromSuperview()
         }
+    }
+    
+    func removeConnectionChart() {
+        if barChart != nil {
+            barChart.removeFromSuperview()
+        }
+    }
+    
+    func removeControls() {
         if nextButton != nil {
             nextButton.removeFromSuperview()
         }
         if backButton != nil {
             backButton.removeFromSuperview()
         }
-        if barChart != nil {
-            barChart.removeFromSuperview()
-        }
         if noDataLabel != nil {
             noDataLabel.removeFromSuperview()
         }
     }
     
-    func loadData(day: String) {
-        // load log data from Realm
+    func loadMonitoringData(day: String) -> Bool {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
         let startDay:NSDate = dateFormatter.dateFromString("\(self.day) 00:00:00")!
@@ -119,27 +209,18 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         let data = realm.objects(MonitoringData.self).filter(predicate).sorted("date", ascending: true)
         
         if data.count <= 0 {
-            self.view.addSubview(noDataLabel)
-            return
+            return false
         }
         
-        //print(logs)
-        
-        var startIndex:Int! = data.count
-        var endIndex:Int! = -1
-        
         for log in data {
-            if log.interval() > endIndex {
-                endIndex = log.interval()
-            }
-            if log.interval() < startIndex {
-                startIndex = log.interval()
+            if log.interval() > maxInterval {
+                maxInterval = log.interval()
             }
         }
         
         phoneData.removeAll()
-        phoneData = [MonitoringData](count: endIndex + 1, repeatedValue: MonitoringData())
-        isCharging = [Bool](count: endIndex + 1, repeatedValue: false)
+        phoneData = [MonitoringData](count: maxInterval + 1, repeatedValue: MonitoringData())
+        isCharging = [Bool](count: maxInterval + 1, repeatedValue: false)
         
         for index in 0 ..< data.count {
             let i = data.count - 1 - index
@@ -173,36 +254,61 @@ public class HDPhoneMonitorChartViewController: UIViewController {
             }
         }
         
-        // load connection data
-        let cpredicate = NSPredicate(format: "date >= %@ && date <= %@ && status = 'Disconnected'", startDay, endDay)
-        let cdata = realm.objects(ConnectionData.self).filter(cpredicate).sorted("date", ascending: true)
-        if cdata.count > 0 {
-            
-            connectionData.removeAll()
-            connectionData = [Int](count: endIndex + 1, repeatedValue: 0)
-            
-            for log in cdata {
-                connectionData[log.interval()] += 1
-            }
-            print(cdata.count)
-        }
-        
-        addChart()
-        
+        return true
     }
     
-    func addChart() {
-        let intervals = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
+    func loadConnectionData(day: String) -> Bool {
+        if !isShowConnectionChart {
+            return true
+        }
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
+        let startDay:NSDate = dateFormatter.dateFromString("\(self.day) 00:00:00")!
+        let endDay:NSDate = dateFormatter.dateFromString("\(self.day) 23:23:59")!
+        let realm = try! Realm()
+        let cpredicate = NSPredicate(format: "date >= %@ && date <= %@ && status = 'Disconnected'", startDay, endDay)
+        let cdata = realm.objects(ConnectionData.self).filter(cpredicate).sorted("date", ascending: true)
+        
+        if cdata.count <= 0 {
+            return false
+        }
+        
+        connectionData.removeAll()
+        connectionData = [Int](count: maxInterval + 1, repeatedValue: 0)
+        for log in cdata {
+            connectionData[log.interval()] += 1
+        }
+        
+        return true
+    }
+    
+    func loadData(day: String) {
+        // load log data from Realm
+        if loadMonitoringData(day) && loadConnectionData(day) {
+            addChart()
+        }
+        else {
+            self.view.addSubview(noDataLabel)
+        }
+    }
+    
+    func addConnectionChart() {
+        if !isShowConnectionChart {
+            return
+        }
         
         barChart.backgroundColor = UIColor.clearColor()
         
         barChart.labelMarginTop = 0.0
-        barChart.xLabels = [String](count: Int(intervals), repeatedValue: "")
+        barChart.xLabels = [String](count: Int(INTERVALS), repeatedValue: "")
         barChart.yValues = connectionData
         barChart.strokeChart()
         
         self.view.addSubview(barChart)
-        
+    }
+    
+    func addBatteryChart() {
         // load battery data to chart
         let batteryLogData:HDLineChartData = HDLineChartData()
         batteryLogData.color = HDChartColor.RedColor
@@ -243,7 +349,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         lineChart.legends = ["Batttery Level (%)", "Charging", "Memory Usage (MB)"]
         
         
-        lineChart.xValueCount = intervals
+        lineChart.xValueCount = INTERVALS
         lineChart.xLabels = ["0", "3", "6", "9", "12", "15", "18", "21"]
         
         lineChart.chartData = [batteryLogData, chargingData, memoryUsageData]
@@ -253,9 +359,15 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         self.view.addSubview(lineChart)
     }
     
-    func viewDidRotated()
-    {
+    func addChart() {
+        addConnectionChart()
+        addBatteryChart()
+    }
+    
+    func viewDidRotated() {
         removeView()
+        initVariable()
+        initControls()
         initView()
         loadData(day)
     }
@@ -271,10 +383,11 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     func toNextDay() {
         // date = next date
         day = jumpDay(day, daysToJump: 1)
-        print(day)
-        print("Next")
+        clearData()
         // refresh view
         removeView()
+        initVariable()
+        initControls()
         initView()
         loadData(day)
     }
@@ -282,13 +395,36 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     func toPreviousDay() {
         // date  = previous date
         day = jumpDay(day, daysToJump: -1)
-        print(day)
-        print("Back")
+        clearData()
         // refresh view
         removeView()
+        initVariable()
+        initControls()
         initView()
         loadData(day)
     }
     
+    func showConnectionChart() {
+        isShowConnectionChart = true
+        userDefault.setValue(isShowConnectionChart, forKey: "isShowConnectionChart")
+        userDefault.synchronize()
+        
+        self.initConnectionChartView()
+        self.loadConnectionData(day)
+        self.addConnectionChart()
+        initSettingsView()
+    }
     
+    func hideConnectionChart() {
+        isShowConnectionChart = false
+        userDefault.setValue(isShowConnectionChart, forKey: "isShowConnectionChart")
+        userDefault.synchronize()
+        
+        self.removeConnectionChart()
+        initSettingsView()
+    }
+    
+    func sync() {
+        
+    }
 }

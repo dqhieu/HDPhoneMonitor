@@ -28,10 +28,12 @@ public class HDBarChart: UIView {
     var yLabels: NSArray = []
     public var yValues: NSArray = [] {
         didSet{
-            if (yMaxValue != nil) {
-                yValueMax = yMaxValue * 10
-            }else{
-                self.getYValueMax(yValues)
+            if yValues.count > 0 {
+                if (yMaxValue != nil) {
+                    yValueMax = yMaxValue * 10
+                }else{
+                    self.getYValueMax(yValues)
+                }
             }
         }
     }
