@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   # 2
-  s.version = "0.4.1"
+  s.version = "0.4.2"
 
   # 3
   s.license      = 'MIT'
@@ -39,6 +39,8 @@ Pod::Spec.new do |s|
   s.dependency 'RealmSwift'
   s.dependency 'GoogleAPIClient/Core', '~> 1.0.2'
   s.dependency 'GTMOAuth2', '~> 1.1.0'
+  s.dependency 'SVProgressHUD'
+
 
   # 8
   s.source_files = "HDPhoneMonitor/**/*.{swift}"

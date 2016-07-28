@@ -31,7 +31,7 @@ pod 'HDPhoneMonitor', :git => 'https://github.com/dqhieu/HDPhoneMonitor.git'
   let keyChainName = "{YOUR_KEY_CHAIN_NAME}"
   let clientID = "{YOUR_CLIEN_ID}"
   let spreadSheetID = "{YOUR_SPREADSHEET_ID}"
-  
+
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // Override point for customization after application launch.
     HDPhoneMonitor.startService()
@@ -100,6 +100,7 @@ self.navigationController!.pushViewController(phoneMonitorChartViewController, a
   - Libraries for Google Sheet API:
     - Google API Client `pod 'GoogleAPIClient/Core', '~> 1.0.2'`
     - Google OAuth2 `pod 'GTMOAuth2', '~> 1.1.0'`
+  - `pod 'SVProgressHUD'` for UI
 
 ## License
 HDPhoneMonitor is released under the MIT license. See LICENSE for details.

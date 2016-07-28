@@ -10,6 +10,7 @@ import UIKit
 import RealmSwift
 import GoogleAPIClient
 import GTMOAuth2
+import SVProgressHUD
 
 public class HDPhoneMonitorChartViewController: UIViewController {
     
@@ -440,6 +441,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         if let authorizer = HDPhoneMonitor.sharedService.googleSheetService!.authorizer,
             canAuth = authorizer.canAuthorize where canAuth {
             HDPhoneMonitor.sharedService.sync()
+            showProgressDialog()
         } else {
             presentViewController(
                 createAuthController(),
@@ -475,7 +477,6 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         
         HDPhoneMonitor.sharedService.googleSheetService!.authorizer = authResult
         dismissViewControllerAnimated(true, completion: nil)
-        self.sync()
     }
     
     // Helper for showing an alert
@@ -494,16 +495,25 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         presentViewController(alert, animated: true, completion: nil)
     }
     
+    func showProgressDialog() {
+        SVProgressHUD.show()
+        self.navigationItem.rightBarButtonItem?.enabled = false
+        self.navigationItem.leftBarButtonItem?.enabled = false
+    }
 }
 
 extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
     func didSync(object: GTLObject, error: NSError?) {
         if let error = error {
-            print("--------Error----------")
-            print(error.localizedDescription)
+            //print("--------Error----------")
+            //print(error.localizedDescription)
+            SVProgressHUD.showErrorWithStatus(error.localizedDescription)
         }
         else {
-            print("--------Successfully---------")
+            //print("--------Successfully---------")
+            SVProgressHUD.showSuccessWithStatus("Synced")
         }
+        self.navigationItem.rightBarButtonItem?.enabled = true
+        self.navigationItem.leftBarButtonItem?.enabled = true
     }
 }

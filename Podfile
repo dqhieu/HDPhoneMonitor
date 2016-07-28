@@ -9,5 +9,6 @@ target 'HDPhoneMonitor' do
   pod ‘RealmSwift’
   pod 'GoogleAPIClient/Core', '~> 1.0.2'
   pod 'GTMOAuth2', '~> 1.1.0'
+  pod ‘SVProgressHUD’  
 
 end
