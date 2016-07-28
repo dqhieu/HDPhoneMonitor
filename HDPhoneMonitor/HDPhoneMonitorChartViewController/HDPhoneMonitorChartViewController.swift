@@ -441,7 +441,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         if let authorizer = HDPhoneMonitor.sharedService.googleSheetService!.authorizer,
             canAuth = authorizer.canAuthorize where canAuth {
             HDPhoneMonitor.sharedService.sync()
-            showProgressDialog()
+            showProgressDialog("Syncing")
         } else {
             presentViewController(
                 createAuthController(),
@@ -495,8 +495,13 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         presentViewController(alert, animated: true, completion: nil)
     }
     
-    func showProgressDialog() {
-        SVProgressHUD.show()
+    func showProgressDialog(text: String?) {
+        if text != nil {
+            SVProgressHUD.showWithStatus(text)
+        }
+        else {
+            SVProgressHUD.show()
+        }
         self.navigationItem.rightBarButtonItem?.enabled = false
         self.navigationItem.leftBarButtonItem?.enabled = false
     }
