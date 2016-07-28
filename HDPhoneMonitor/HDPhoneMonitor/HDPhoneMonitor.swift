@@ -39,6 +39,11 @@ class ConnectionData: Object {
     }
 }
 
+//MARK: - DataType
+enum DataType: Int {
+    case MonitoringData = 1, ConnectionData
+}
+
 //MARK: - HDPhoneMonitor
 public class HDPhoneMonitor: NSObject {
     
@@ -73,7 +78,7 @@ public class HDPhoneMonitor: NSObject {
     public var googleSheetService:GTLService?
     let baseUrl = "https://sheets.googleapis.com/v4/spreadsheets"
     var spreadsheetId = ""
-    
+    var finishedTask = 0
     
     //MARK: - Monitor Functions
     
@@ -178,61 +183,56 @@ public class HDPhoneMonitor: NSObject {
         sharedService.spreadsheetId = spreadSheetID
     }
     
-    func sync() {
-        
+    func syncData(dataType: DataType) {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
         
-        let monitoringData:NSMutableDictionary = NSMutableDictionary()
+        let data:NSMutableDictionary = NSMutableDictionary()
         
-        var monitoringValues = [["Date", "BatteryLevel", "Is Charging", "Memory Usage"]]
         let realm = try! Realm()
-        let mdata = realm.objects(MonitoringData.self).sorted("date", ascending: true)
-        for index in 0 ..< mdata.count {
-            let data = mdata[index]
-            let value = [String(dateFormatter.stringFromDate(data.date)), String(data.batteryLevel), String(data.chargingStatus), String(data.memoryUsage)]
-            monitoringValues.append(value)
+        var values = [[]]
+        var dataRange = ""
+        //-----------------------
+        switch dataType {
+        case .MonitoringData:
+            values = [["Date", "BatteryLevel", "Is Charging", "Memory Usage"]]
+            let rdata = realm.objects(MonitoringData.self).sorted("date", ascending: true)
+            for index in 0 ..< rdata.count {
+                let data = rdata[index]
+                let value = [String(dateFormatter.stringFromDate(data.date)), String(data.batteryLevel), String(data.chargingStatus), String(data.memoryUsage)]
+                values.append(value)
+            }
+            dataRange = "MonitoringData!A1:D\(rdata.count + 1)"
+        case .ConnectionData :
+            values = [["Date", "DeviceID", "Status"]]
+            let rdata = realm.objects(ConnectionData.self).sorted("date", ascending: true)
+            for index in 0 ..< rdata.count {
+                let data = rdata[index]
+                let value = [String(dateFormatter.stringFromDate(data.date)), String(data.deviceID), String(data.status)]
+                values.append(value)
+            }
+            dataRange = "ConnectionData!A1:D\(rdata.count + 1)"
         }
-        let monitoringDataRange = "MonitoringData!A1:D\(mdata.count + 1)"
+        //-----------------------
         
-        
-        monitoringData.setValue(monitoringValues, forKey: "values")
-        monitoringData.setValue(monitoringDataRange, forKey: "range")
-        monitoringData.setValue("ROWS", forKey: "majorDimension")
+        data.setValue(values, forKey: "values")
+        data.setValue(dataRange, forKey: "range")
+        data.setValue("ROWS", forKey: "majorDimension")
         
         let params = ["valueInputOption": "RAW"]
         
-        let object = GTLObject(JSON: monitoringData)
+        let object = GTLObject(JSON: data)
         
-        let monitorDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, monitoringDataRange), queryParameters: params)
+        let monitorDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, dataRange), queryParameters: params)
         
         
         googleSheetService!.fetchObjectByUpdatingObject(object, forURL: monitorDataUrl, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displayResultWithTicket(_:finishedWithObject:error:)))
-        
-        // --------------------------------------------------
-        
-        
-        
-        let connectionData:NSMutableDictionary = NSMutableDictionary()
-        
-        var connectionValues = [["Date", "DeviceID", "Status"]]
-        let cdata = realm.objects(ConnectionData.self).sorted("date", ascending: true)
-        for index in 0 ..< cdata.count {
-            let data = cdata[index]
-            let value = [String(dateFormatter.stringFromDate(data.date)), String(data.deviceID), String(data.status)]
-            connectionValues.append(value)
-        }
-        let connectionDataRange = "ConnectionData!A1:C\(cdata.count + 1)"
-        
-        connectionData.setValue(connectionValues, forKey: "values")
-        connectionData.setValue(connectionDataRange, forKey: "range")
-        connectionData.setValue("ROWS", forKey: "majorDimension")
-        
-        let cobject = GTLObject(JSON: connectionData)
-        
-        let connectionDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, connectionDataRange), queryParameters: params)
-        
-        googleSheetService!.fetchObjectByUpdatingObject(cobject, forURL: connectionDataUrl, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displayResultWithTicket(_:finishedWithObject:error:)))
+    }
+    
+    func sync() {
+        finishedTask = 0
+        syncData(DataType.MonitoringData)
+        syncData(DataType.ConnectionData)
     }
     
     weak var delegate:HDPhoneMonitorDelegate?
@@ -240,7 +240,20 @@ public class HDPhoneMonitor: NSObject {
     func displayResultWithTicket(ticket: GTLServiceTicket,
                                  finishedWithObject object : GTLObject,
                                                     error : NSError?) {
-        delegate?.didSync(object, error: error)
+        if let error = error {
+            delegate?.didSync(object, error: error)
+            finishedTask = 0
+        }
+        else {
+            if finishedTask < 1 {
+                finishedTask += 1
+                return
+            }
+            else {
+                delegate?.didSync(object, error: error)
+                finishedTask = 0
+            }
+        }
         
     }
     

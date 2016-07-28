@@ -146,7 +146,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         let actionSync = UIAlertAction(title: "Sync to Google Sheet", style: .Default) { (action: UIAlertAction) in
             self.sync()
         }
-        let actionCancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+        let actionCancel = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         if isShowConnectionChart {
             settingsView.addAction(actionHideConnectionChart)
         }
