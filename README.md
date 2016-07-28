@@ -4,6 +4,15 @@ HDPhoneMonitor is a service allow you to monitor your phone battery level and ap
 
 ![preview](preview.PNG)
 
+## Content
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Initialize](#initialize)
+  - [Using](#using)
+  - [Display](#display)
+- [Requirement](#requirement)
+
 ## Installation
 This isn't on CocoaPods yet, so to install, add this to your Podfile
 ```
