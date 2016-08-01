@@ -34,17 +34,13 @@ pod 'HDPhoneMonitor', :git => 'https://github.com/dqhieu/HDPhoneMonitor.git'
     return true
   }
   ```
-3. Enable cloud storage service if you want to save your data on Google Spreadsheet. You must need to enable Google Spreadsheet API service first, follow this [instruction](https://developers.google.com/sheets/quickstart/ios?ver=swift)
+3. Enable cloud storage service if you want to save your data on Google Spreadsheet.
 
   ```swift
-  let keyChainName = "{YOUR_KEY_CHAIN_NAME}"
-  let clientID = "{YOUR_CLIEN_ID}"
-  let spreadSheetID = "{YOUR_SPREADSHEET_ID}"
-
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     // Override point for customization after application launch.
     HDPhoneMonitor.startService()
-    HDPhoneMonitor.enableCloudStorage(keyChainName, clientID, spreadSheetID)
+    HDPhoneMonitor.enableCloudStorage()
     return true
   }
   ```
