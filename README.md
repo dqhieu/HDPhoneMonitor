@@ -45,8 +45,6 @@ pod 'HDPhoneMonitor', :git => 'https://github.com/dqhieu/HDPhoneMonitor.git'
   }
   ```
 
-  Your spreadsheet must have 2 sheets named "MonitoringData" and "ConnectionData", like this:
-  ![sheets](sheets.png)
 
 ### Using
 Put `HDPhoneMonitor.sharedService.monitor()` in the functions that run every 5 mins or less in both background mode and foreground mode. That mean the service will log your phone battery level and memory usage every 5 mins. You can change the time interval in `HDPhoneMonitor.swift`
