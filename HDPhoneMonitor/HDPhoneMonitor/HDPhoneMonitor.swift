@@ -71,14 +71,6 @@ public class HDPhoneMonitor: NSObject {
     static var isCharging = false
     static var connectionDropCount = 0
     
-    //MARK: - Google Sheet API Variables
-    public static var kKeychainItemName = "HDPhoneMonitor Client ID"
-    public static var kClientID = "558527852240-40dp6ohf8ut1qshcsp7nu09nesr7ql3h.apps.googleusercontent.com"
-    public static let scopes = ["https://www.googleapis.com/auth/spreadsheets"]
-    public var googleSheetService:GTLService?
-    let baseUrl = "https://sheets.googleapis.com/v4/spreadsheets"
-    var spreadsheetId:String?
-    var finishedTask = 0
     
     //MARK: - Monitor Functions
     
@@ -175,6 +167,16 @@ public class HDPhoneMonitor: NSObject {
         }
     }
     
+    
+    //MARK: - Google Sheet API Variables
+    public static let kKeychainItemName = "HDPhoneMonitor Client ID"
+    public static let kClientID = "558527852240-40dp6ohf8ut1qshcsp7nu09nesr7ql3h.apps.googleusercontent.com"
+    public static let scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+    public var googleSheetService:GTLService?
+    let baseUrl = "https://sheets.googleapis.com/v4/spreadsheets"
+    var spreadsheetId:String?
+    var finishedTask = 0
+    
     //MARK: - Google Sheet API Functions
     public static func enableCloudStorage() {
         sharedService.googleSheetService = GTLService()
@@ -215,14 +217,14 @@ public class HDPhoneMonitor: NSObject {
         
         let fullUrl = NSURL(string: baseUrl)
         
-        googleSheetService!.fetchObjectByInsertingObject(object, forURL: fullUrl!, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displayCreateResult(_:finishedWithObject:error:)))
+        googleSheetService!.fetchObjectByInsertingObject(object, forURL: fullUrl!, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displayCreatedResult(_:finishedWithObject:error:)))
     }
     
-    func syncData(dataType: DataType) {
+    func getValueRange(dataType:DataType) -> NSMutableDictionary {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd HH:mm:ss"
         
-        let data:NSMutableDictionary = NSMutableDictionary()
+        let valuerange:NSMutableDictionary = NSMutableDictionary()
         
         let realm = try! Realm()
         var values = [[]]
@@ -250,52 +252,47 @@ public class HDPhoneMonitor: NSObject {
         }
         //-----------------------
         
-        data.setValue(values, forKey: "values")
-        data.setValue(dataRange, forKey: "range")
-        data.setValue("ROWS", forKey: "majorDimension")
+        valuerange.setValue(values, forKey: "values")
+        valuerange.setValue(dataRange, forKey: "range")
+        valuerange.setValue("ROWS", forKey: "majorDimension")
         
-        let params = ["valueInputOption": "RAW"]
-        
-        let object = GTLObject(JSON: data)
-        
-        let monitorDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId!, dataRange), queryParameters: params)
-        
-        
-        googleSheetService!.fetchObjectByUpdatingObject(object, forURL: monitorDataUrl, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displaySyncResult(_:finishedWithObject:error:)))
+        return valuerange
     }
     
     func sync() {
-        finishedTask = 0
-        syncData(DataType.MonitoringData)
-        syncData(DataType.ConnectionData)
+        let batchData = NSMutableDictionary()
+        
+        let monitoringValueRange = getValueRange(.MonitoringData)
+        let connectionValueRange = getValueRange(.ConnectionData)
+        
+        let data = [monitoringValueRange, connectionValueRange]
+        
+        batchData.setValue("RAW", forKey: "valueInputOption")
+        batchData.setValue(data, forKey: "data")
+        
+        let syncUrlString = "https://sheets.googleapis.com/v4/spreadsheets/\(spreadsheetId!)/values:batchUpdate"
+        let params = ["valueInputOption": "RAW"]
+        
+        let syncUrl = GTLUtilities.URLWithString(syncUrlString, queryParameters: params)
+        
+        let object = GTLObject(JSON: batchData)
+        
+        googleSheetService!.fetchObjectByInsertingObject(object, forURL: syncUrl!, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displaySyncedResult(_:finishedWithObject:error:)))
     }
     
     weak var delegate:HDPhoneMonitorDelegate?
     
-    func displayCreateResult(ticket: GTLServiceTicket,
+    func displayCreatedResult(ticket: GTLServiceTicket,
                              finishedWithObject object : GTLObject,
                                                 error : NSError?) {
         delegate?.didCreateSpreadSheet(object, error: error)
         
     }
     
-    func displaySyncResult(ticket: GTLServiceTicket,
+    func displaySyncedResult(ticket: GTLServiceTicket,
                                  finishedWithObject object : GTLObject,
                                                     error : NSError?) {
-        if let error = error {
-            delegate?.didSync(object, error: error)
-            finishedTask = 0
-        }
-        else {
-            if finishedTask < 1 {
-                finishedTask += 1
-                return
-            }
-            else {
-                delegate?.didSync(object, error: error)
-                finishedTask = 0
-            }
-        }
+        delegate?.didSync(object, error: error)
         
     }
     

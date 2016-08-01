@@ -518,7 +518,7 @@ extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
         if let error = error {
             //print("--------Error----------")
             //print(error.localizedDescription)
-            if error.code == 400 {
+            if error.localizedDescription.containsString("token") {
                 presentViewController(
                     createAuthController(),
                     animated: true,
@@ -539,7 +539,7 @@ extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
     
     func didCreateSpreadSheet(object: GTLObject, error: NSError?) {
         if let error = error {
-            if error.code == 400 {
+            if error.localizedDescription.containsString("token") {
                 presentViewController(
                     createAuthController(),
                     animated: true,
