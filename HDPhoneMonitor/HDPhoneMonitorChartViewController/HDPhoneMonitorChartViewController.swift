@@ -512,7 +512,16 @@ extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
         if let error = error {
             //print("--------Error----------")
             //print(error.localizedDescription)
-            SVProgressHUD.showErrorWithStatus(error.localizedDescription)
+            if error.code == 400 {
+                presentViewController(
+                    createAuthController(),
+                    animated: true,
+                    completion: nil
+                )
+            }
+            else {
+                SVProgressHUD.showErrorWithStatus(error.localizedDescription)
+            }
         }
         else {
             //print("--------Successfully---------")
