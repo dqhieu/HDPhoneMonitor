@@ -440,8 +440,14 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         }
         if let authorizer = HDPhoneMonitor.sharedService.googleSheetService!.authorizer,
             canAuth = authorizer.canAuthorize where canAuth {
-            HDPhoneMonitor.sharedService.sync()
-            showProgressDialog("Syncing")
+            if HDPhoneMonitor.sharedService.spreadsheetId != nil {
+                HDPhoneMonitor.sharedService.sync()
+                showProgressDialog("Syncing")
+            }
+            else {
+                HDPhoneMonitor.sharedService.createSpreadSheet()
+                showProgressDialog("Creating spreadsheet")
+            }
         } else {
             presentViewController(
                 createAuthController(),
@@ -529,5 +535,28 @@ extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
         }
         self.navigationItem.rightBarButtonItem?.enabled = true
         self.navigationItem.leftBarButtonItem?.enabled = true
+    }
+    
+    func didCreateSpreadSheet(object: GTLObject, error: NSError?) {
+        if let error = error {
+            if error.code == 400 {
+                presentViewController(
+                    createAuthController(),
+                    animated: true,
+                    completion: nil
+                )
+            }
+            else {
+                SVProgressHUD.showErrorWithStatus(error.localizedDescription)
+            }
+        }
+        else {
+            // sync
+            //SVProgressHUD.showSuccessWithStatus("Created spreadsheet")
+            HDPhoneMonitor.sharedService.spreadsheetId = object.JSON["spreadsheetId"]! as! String
+            userDefault.setValue(object.JSON["spreadsheetId"]!, forKey: "spreadsheetId")
+            userDefault.synchronize()
+            self.sync()
+        }
     }
 }

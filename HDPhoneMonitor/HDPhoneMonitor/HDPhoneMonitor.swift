@@ -72,12 +72,12 @@ public class HDPhoneMonitor: NSObject {
     static var connectionDropCount = 0
     
     //MARK: - Google Sheet API Variables
-    public static var kKeychainItemName = ""
-    public static var kClientID = ""
+    public static var kKeychainItemName = "HDPhoneMonitor Client ID"
+    public static var kClientID = "558527852240-40dp6ohf8ut1qshcsp7nu09nesr7ql3h.apps.googleusercontent.com"
     public static let scopes = ["https://www.googleapis.com/auth/spreadsheets"]
     public var googleSheetService:GTLService?
     let baseUrl = "https://sheets.googleapis.com/v4/spreadsheets"
-    var spreadsheetId = ""
+    var spreadsheetId:String?
     var finishedTask = 0
     
     //MARK: - Monitor Functions
@@ -176,11 +176,46 @@ public class HDPhoneMonitor: NSObject {
     }
     
     //MARK: - Google Sheet API Functions
-    public static func enableCloudStorage(keyChain keychainItemName: String, clientID: String, spreadSheetID: String) {
+    public static func enableCloudStorage() {
         sharedService.googleSheetService = GTLService()
-        kKeychainItemName = keychainItemName
-        kClientID = clientID
-        sharedService.spreadsheetId = spreadSheetID
+        if sharedService.userDefault.valueForKey("spreadsheetId") != nil {
+            sharedService.spreadsheetId = sharedService.userDefault.valueForKey("spreadsheetId") as! String
+        }
+    }
+    
+    func createSpreadSheet() {
+        let baseUrl = "https://sheets.googleapis.com/v4/spreadsheets"
+        
+        let spreadsheet:NSMutableDictionary = NSMutableDictionary()
+        
+        let properties:NSMutableDictionary = NSMutableDictionary()
+        properties.setValue("HDPhoneMonitor Data", forKey: "title")
+        
+        spreadsheet.setValue(properties, forKey: "properties")
+        
+        var sheets = [NSMutableDictionary()]
+        let sheet = NSMutableDictionary()
+        let sheet2 = NSMutableDictionary()
+        let sheetProperties = NSMutableDictionary()
+        
+        sheetProperties.setValue("MonitoringData", forKey: "title")
+        sheetProperties.setValue(0, forKey: "index")
+        sheet.setValue(sheetProperties, forKey: "properties")
+        sheets.append(sheet)
+        
+        let sheetProperties2 = NSMutableDictionary()
+        sheetProperties2.setValue("ConnectionData", forKey: "title")
+        sheetProperties2.setValue(1, forKey: "index")
+        sheet2.setValue(sheetProperties2, forKey: "properties")
+        sheets.append(sheet2)
+        
+        spreadsheet.setValue(sheets, forKey: "sheets")
+        
+        let object = GTLObject(JSON: spreadsheet)
+        
+        let fullUrl = NSURL(string: baseUrl)
+        
+        googleSheetService!.fetchObjectByInsertingObject(object, forURL: fullUrl!, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displayCreateResult(_:finishedWithObject:error:)))
     }
     
     func syncData(dataType: DataType) {
@@ -223,10 +258,10 @@ public class HDPhoneMonitor: NSObject {
         
         let object = GTLObject(JSON: data)
         
-        let monitorDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId, dataRange), queryParameters: params)
+        let monitorDataUrl = GTLUtilities.URLWithString(String(format:"%@/%@/values/%@", baseUrl, spreadsheetId!, dataRange), queryParameters: params)
         
         
-        googleSheetService!.fetchObjectByUpdatingObject(object, forURL: monitorDataUrl, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displayResultWithTicket(_:finishedWithObject:error:)))
+        googleSheetService!.fetchObjectByUpdatingObject(object, forURL: monitorDataUrl, delegate: self, didFinishSelector: #selector(HDPhoneMonitor.displaySyncResult(_:finishedWithObject:error:)))
     }
     
     func sync() {
@@ -237,7 +272,14 @@ public class HDPhoneMonitor: NSObject {
     
     weak var delegate:HDPhoneMonitorDelegate?
     
-    func displayResultWithTicket(ticket: GTLServiceTicket,
+    func displayCreateResult(ticket: GTLServiceTicket,
+                             finishedWithObject object : GTLObject,
+                                                error : NSError?) {
+        delegate?.didCreateSpreadSheet(object, error: error)
+        
+    }
+    
+    func displaySyncResult(ticket: GTLServiceTicket,
                                  finishedWithObject object : GTLObject,
                                                     error : NSError?) {
         if let error = error {
@@ -261,4 +303,5 @@ public class HDPhoneMonitor: NSObject {
 
 protocol HDPhoneMonitorDelegate: class {
     func didSync(object: GTLObject, error: NSError?)
+    func didCreateSpreadSheet(object: GTLObject, error: NSError?)
 }
