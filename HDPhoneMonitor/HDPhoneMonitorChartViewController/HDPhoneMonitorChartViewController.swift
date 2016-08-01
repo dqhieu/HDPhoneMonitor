@@ -483,6 +483,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         
         HDPhoneMonitor.sharedService.googleSheetService!.authorizer = authResult
         dismissViewControllerAnimated(true, completion: nil)
+        self.sync()
     }
     
     // Helper for showing an alert
@@ -511,23 +512,42 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         self.navigationItem.rightBarButtonItem?.enabled = false
         self.navigationItem.leftBarButtonItem?.enabled = false
     }
-}
-
-extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
-    func didSync(object: GTLObject, error: NSError?) {
-        if let error = error {
-            //print("--------Error----------")
-            //print(error.localizedDescription)
-            if error.localizedDescription.containsString("token") {
+    
+    func handleError(error: NSError) {
+        print(error)
+        SVProgressHUD.dismiss()
+        
+        if let errorJSON = error.userInfo["json"] {
+            
+            let errorDescription = errorJSON["error_description"] as! String
+            
+            if errorDescription == "Token has been revoked." {
                 presentViewController(
                     createAuthController(),
                     animated: true,
                     completion: nil
                 )
             }
-            else {
-                SVProgressHUD.showErrorWithStatus(error.localizedDescription)
+        }
+        else if let errorDescription = error.userInfo["error"] {
+            let errorDescriptionString = errorDescription as! String
+            if errorDescriptionString == "Requested entity was not found." {
+                HDPhoneMonitor.sharedService.spreadsheetId = nil
+                userDefault.setValue(nil, forKey: "spreadsheetId")
+                userDefault.synchronize()
+                self.sync()
             }
+        }
+        else {
+            SVProgressHUD.showErrorWithStatus(error.localizedDescription)
+        }
+    }
+}
+
+extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
+    func didSync(object: GTLObject, error: NSError?) {
+        if let error = error {
+            handleError(error)
         }
         else {
             //print("--------Successfully---------")
@@ -539,16 +559,7 @@ extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
     
     func didCreateSpreadSheet(object: GTLObject, error: NSError?) {
         if let error = error {
-            if error.localizedDescription.containsString("token") {
-                presentViewController(
-                    createAuthController(),
-                    animated: true,
-                    completion: nil
-                )
-            }
-            else {
-                SVProgressHUD.showErrorWithStatus(error.localizedDescription)
-            }
+            handleError(error)
         }
         else {
             // sync
