@@ -19,6 +19,7 @@
 		74B4188C1D504554000011F1 /* HDPhoneMonitorChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B4188B1D504554000011F1 /* HDPhoneMonitorChartViewController.swift */; };
 		74B4188E1D50455F000011F1 /* HDPhoneMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B4188D1D50455F000011F1 /* HDPhoneMonitor.swift */; };
 		74B418901D50466E000011F1 /* GoogleSheetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B4188F1D50466E000011F1 /* GoogleSheetService.swift */; };
+		74B418941D504E8B000011F1 /* ControllerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B418931D504E8B000011F1 /* ControllerHelper.swift */; };
 		74CFEC491D48A644004AE125 /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 74CFEC481D48A644004AE125 /* GTMOAuth2ViewTouch.xib */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +38,7 @@
 		74B4188B1D504554000011F1 /* HDPhoneMonitorChartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDPhoneMonitorChartViewController.swift; path = Controller/HDPhoneMonitorChartViewController.swift; sourceTree = "<group>"; };
 		74B4188D1D50455F000011F1 /* HDPhoneMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HDPhoneMonitor.swift; path = Service/HDPhoneMonitor.swift; sourceTree = "<group>"; };
 		74B4188F1D50466E000011F1 /* GoogleSheetService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GoogleSheetService.swift; path = Service/GoogleSheetService.swift; sourceTree = "<group>"; };
+		74B418931D504E8B000011F1 /* ControllerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ControllerHelper.swift; path = Controller/ControllerHelper.swift; sourceTree = "<group>"; };
 		74CFEC481D48A644004AE125 /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GTMOAuth2ViewTouch.xib; sourceTree = "<group>"; };
 		8E6679479EEE0456BECCB72C /* Pods-HDPhoneMonitor.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDPhoneMonitor.release.xcconfig"; path = "Pods/Target Support Files/Pods-HDPhoneMonitor/Pods-HDPhoneMonitor.release.xcconfig"; sourceTree = "<group>"; };
 		A1F98193182F1C13B581E639 /* Pods-HDPhoneMonitor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HDPhoneMonitor.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HDPhoneMonitor/Pods-HDPhoneMonitor.debug.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 			children = (
 				74578B7E1D3FD1F900B0AAB0 /* HDPhoneMonitor.h */,
 				74578B801D3FD1F900B0AAB0 /* Info.plist */,
+				74B418951D504EAC000011F1 /* View */,
 				74578B941D3FD27E00B0AAB0 /* Controller */,
 				74578B951D3FD28400B0AAB0 /* Service */,
 				74578B961D3FD28B00B0AAB0 /* Chart */,
@@ -105,7 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				74B4188B1D504554000011F1 /* HDPhoneMonitorChartViewController.swift */,
-				74CFEC481D48A644004AE125 /* GTMOAuth2ViewTouch.xib */,
+				74B418931D504E8B000011F1 /* ControllerHelper.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -131,6 +134,14 @@
 				74B418831D50454B000011F1 /* HDValue.swift */,
 			);
 			name = Chart;
+			sourceTree = "<group>";
+		};
+		74B418951D504EAC000011F1 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				74CFEC481D48A644004AE125 /* GTMOAuth2ViewTouch.xib */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,6 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74B418941D504E8B000011F1 /* ControllerHelper.swift in Sources */,
 				74B418861D50454B000011F1 /* HDChartConfig.swift in Sources */,
 				74B4188E1D50455F000011F1 /* HDPhoneMonitor.swift in Sources */,
 				74B4188C1D504554000011F1 /* HDPhoneMonitorChartViewController.swift in Sources */,

@@ -438,125 +438,41 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         if let authorizer = GoogleSheetService.sharedService.authorizer,
             canAuth = authorizer.canAuthorize where canAuth {
             if GoogleSheetService.spreadsheetId != nil {
+                ControllerHelper.showProgressDialog("Syncing", viewcontroller: self)
                 GoogleSheetService.sharedService.sync()
-                showProgressDialog("Syncing")
             }
             else {
+                ControllerHelper.showProgressDialog("Creating spreadsheet", viewcontroller: self)
                 GoogleSheetService.sharedService.createSpreadSheet()
-                showProgressDialog("Creating spreadsheet")
             }
         } else {
+            ControllerHelper.chartViewController = self
             presentViewController(
-                createAuthController(),
+                ControllerHelper.createAuthController(),
                 animated: true,
                 completion: nil
             )
         }
         
     }
-    
-    private func createAuthController() -> GTMOAuth2ViewControllerTouch {
-        let scopeString = GoogleSheetService.scopes.joinWithSeparator(" ")
-        return GTMOAuth2ViewControllerTouch(
-            scope: scopeString,
-            clientID: GoogleSheetService.kClientID,
-            clientSecret: nil,
-            keychainItemName: GoogleSheetService.kKeychainItemName,
-            delegate: self,
-            finishedSelector: #selector(HDPhoneMonitorChartViewController.viewController(_:finishedWithAuth:error:))
-        )
-    }
-    
-    // Handle completion of the authorization process, and update the Google Sheets API
-    // with the new credentials.
-    func viewController(vc : UIViewController,
-                        finishedWithAuth authResult : GTMOAuth2Authentication, error : NSError?) {
-        
-        if let error = error {
-            GoogleSheetService.sharedService.authorizer = nil
-            showAlert("Authentication Error", message: error.localizedDescription)
-            return
-        }
-        
-        GoogleSheetService.sharedService.authorizer = authResult
-        dismissViewControllerAnimated(true, completion: nil)
-        self.sync()
-    }
-    
-    // Helper for showing an alert
-    func showAlert(title : String, message: String) {
-        let alert = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: UIAlertControllerStyle.Alert
-        )
-        let ok = UIAlertAction(
-            title: "OK",
-            style: UIAlertActionStyle.Default,
-            handler: nil
-        )
-        alert.addAction(ok)
-        presentViewController(alert, animated: true, completion: nil)
-    }
-    
-    func showProgressDialog(text: String?) {
-        if text != nil {
-            SVProgressHUD.showWithStatus(text)
-        }
-        else {
-            SVProgressHUD.show()
-        }
-        self.navigationItem.rightBarButtonItem?.enabled = false
-        self.navigationItem.leftBarButtonItem?.enabled = false
-    }
-    
-    func handleError(error: NSError) {
-        print(error)
-        SVProgressHUD.dismiss()
-        
-        if let errorJSON = error.userInfo["json"] {
-            
-            let errorDescription = errorJSON["error_description"] as! String
-            
-            if errorDescription == "Token has been revoked." {
-                presentViewController(
-                    createAuthController(),
-                    animated: true,
-                    completion: nil
-                )
-            }
-        }
-        else if let errorDescription = error.userInfo["error"] {
-            let errorDescriptionString = errorDescription as! String
-            if errorDescriptionString == "Requested entity was not found." {
-                GoogleSheetService.spreadsheetId = nil
-                userDefault.setValue(nil, forKey: "spreadsheetId")
-                userDefault.synchronize()
-                self.sync()
-            }
-        }
-        else {
-            SVProgressHUD.showErrorWithStatus(error.localizedDescription)
-        }
-    }
 }
 
 extension HDPhoneMonitorChartViewController: GoogleSheetServiceDelegate {
     func didSync(object: GTLObject, error: NSError?) {
+        self.navigationItem.rightBarButtonItem?.enabled = true
+        self.navigationItem.leftBarButtonItem?.enabled = true
         if let error = error {
-            handleError(error)
+            ControllerHelper.handleError(error, viewcontroller: self)
         }
         else {
             //print("--------Successfully---------")
             SVProgressHUD.showSuccessWithStatus("Synced")
         }
-        self.navigationItem.rightBarButtonItem?.enabled = true
-        self.navigationItem.leftBarButtonItem?.enabled = true
     }
     
     func didCreateSpreadSheet(object: GTLObject, error: NSError?) {
         if let error = error {
-            handleError(error)
+            ControllerHelper.handleError(error, viewcontroller: self)
         }
         else {
             // sync
