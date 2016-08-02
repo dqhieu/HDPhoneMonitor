@@ -428,24 +428,21 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     }
     
     func sync() {
-        if HDPhoneMonitor.sharedService.googleSheetService == nil {
-            return
-        }
-        HDPhoneMonitor.sharedService.delegate = self
+        GoogleSheetService.sharedService.delegate = self
         if let auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychainForName(
-            HDPhoneMonitor.kKeychainItemName,
-            clientID: HDPhoneMonitor.kClientID,
+            GoogleSheetService.kKeychainItemName,
+            clientID: GoogleSheetService.kClientID,
             clientSecret: nil) {
-            HDPhoneMonitor.sharedService.googleSheetService!.authorizer = auth
+            GoogleSheetService.sharedService.authorizer = auth
         }
-        if let authorizer = HDPhoneMonitor.sharedService.googleSheetService!.authorizer,
+        if let authorizer = GoogleSheetService.sharedService.authorizer,
             canAuth = authorizer.canAuthorize where canAuth {
-            if HDPhoneMonitor.sharedService.spreadsheetId != nil {
-                HDPhoneMonitor.sharedService.sync()
+            if GoogleSheetService.spreadsheetId != nil {
+                GoogleSheetService.sharedService.sync()
                 showProgressDialog("Syncing")
             }
             else {
-                HDPhoneMonitor.sharedService.createSpreadSheet()
+                GoogleSheetService.sharedService.createSpreadSheet()
                 showProgressDialog("Creating spreadsheet")
             }
         } else {
@@ -459,12 +456,12 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     }
     
     private func createAuthController() -> GTMOAuth2ViewControllerTouch {
-        let scopeString = HDPhoneMonitor.scopes.joinWithSeparator(" ")
+        let scopeString = GoogleSheetService.scopes.joinWithSeparator(" ")
         return GTMOAuth2ViewControllerTouch(
             scope: scopeString,
-            clientID: HDPhoneMonitor.kClientID,
+            clientID: GoogleSheetService.kClientID,
             clientSecret: nil,
-            keychainItemName: HDPhoneMonitor.kKeychainItemName,
+            keychainItemName: GoogleSheetService.kKeychainItemName,
             delegate: self,
             finishedSelector: #selector(HDPhoneMonitorChartViewController.viewController(_:finishedWithAuth:error:))
         )
@@ -476,12 +473,12 @@ public class HDPhoneMonitorChartViewController: UIViewController {
                         finishedWithAuth authResult : GTMOAuth2Authentication, error : NSError?) {
         
         if let error = error {
-            HDPhoneMonitor.sharedService.googleSheetService!.authorizer = nil
+            GoogleSheetService.sharedService.authorizer = nil
             showAlert("Authentication Error", message: error.localizedDescription)
             return
         }
         
-        HDPhoneMonitor.sharedService.googleSheetService!.authorizer = authResult
+        GoogleSheetService.sharedService.authorizer = authResult
         dismissViewControllerAnimated(true, completion: nil)
         self.sync()
     }
@@ -532,7 +529,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         else if let errorDescription = error.userInfo["error"] {
             let errorDescriptionString = errorDescription as! String
             if errorDescriptionString == "Requested entity was not found." {
-                HDPhoneMonitor.sharedService.spreadsheetId = nil
+                GoogleSheetService.spreadsheetId = nil
                 userDefault.setValue(nil, forKey: "spreadsheetId")
                 userDefault.synchronize()
                 self.sync()
@@ -544,7 +541,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     }
 }
 
-extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
+extension HDPhoneMonitorChartViewController: GoogleSheetServiceDelegate {
     func didSync(object: GTLObject, error: NSError?) {
         if let error = error {
             handleError(error)
@@ -564,7 +561,7 @@ extension HDPhoneMonitorChartViewController: HDPhoneMonitorDelegate {
         else {
             // sync
             //SVProgressHUD.showSuccessWithStatus("Created spreadsheet")
-            HDPhoneMonitor.sharedService.spreadsheetId = object.JSON["spreadsheetId"]! as! String
+            GoogleSheetService.spreadsheetId = object.JSON["spreadsheetId"]! as! String
             userDefault.setValue(object.JSON["spreadsheetId"]!, forKey: "spreadsheetId")
             userDefault.synchronize()
             self.sync()
