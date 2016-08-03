@@ -11,7 +11,6 @@ HDPhoneMonitor is a service allow you to monitor your phone battery level and ap
   - [Initialize](#initialize)
   - [Using](#using)
   - [Display](#display)
-- [Requirement](#requirement)
 
 ## Installation
 This isn't on CocoaPods yet, so to install, add this to your Podfile
@@ -47,7 +46,7 @@ pod 'HDPhoneMonitor', :git => 'https://github.com/dqhieu/HDPhoneMonitor.git'
 
 
 ### Using
-Put `HDPhoneMonitor.sharedService.monitor()` in the functions that run every 5 mins or less in both background mode and foreground mode. That mean the service will log your phone battery level and memory usage every 5 mins. You can change the time interval in `HDPhoneMonitor.swift`
+Put `HDPhoneMonitor.sharedService.monitor()` in the functions that run every 5 mins or less in both background mode and foreground mode. That mean the service will log your phone battery level and memory usage every 5 mins. You can change the time interval in `Settings`
 
   For example:
 
@@ -96,14 +95,6 @@ or create by programmatically
 let phoneMonitorChartViewController = HDPhoneMonitorChartViewController()
 self.navigationController!.pushViewController(phoneMonitorChartViewController, animated: true)
 ```
-
-## Requirement
-
-  - [Realm.io](https://realm.io/): We use RealmSwift to save the data and display them into chart. So you need install `pod 'RealmSwift'` if you want to use our service.
-  - Libraries for Google Sheet API:
-    - Google API Client `pod 'GoogleAPIClient/Core', '~> 1.0.2'`
-    - Google OAuth2 `pod 'GTMOAuth2', '~> 1.1.0'`
-  - `pod 'SVProgressHUD'` for UI
 
 ## License
 HDPhoneMonitor is released under the MIT license. See LICENSE for details.
