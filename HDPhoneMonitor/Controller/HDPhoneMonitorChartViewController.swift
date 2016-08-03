@@ -21,6 +21,8 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     var phoneData:[MonitoringData] = []
     var connectionData:[Int] = []
     var isCharging:[Bool] = []
+    var cdata:Results<ConnectionData>?
+    var mdata:Results<MonitoringData>?
     
     var nextButton:UIButton!
     var backButton:UIButton!
@@ -37,7 +39,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     var chartLeftMargin:CGFloat         = 20
     
     var maxInterval:Int = -1
-    let INTERVALS = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
+    var INTERVALS = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
     
     let userDefault = NSUserDefaults()
     
@@ -147,6 +149,30 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         let actionSync = UIAlertAction(title: "Sync to Google Sheet", style: .Default) { (action: UIAlertAction) in
             self.sync()
         }
+        let actionChangeInterval = UIAlertAction(title: "Change interval", style: .Default) { (action: UIAlertAction) in
+            let view = UIAlertController(title: "Change minutes per interval", message: "Please enter a number between 5 and 720", preferredStyle: .Alert)
+            view.addTextFieldWithConfigurationHandler({ (textField: UITextField) in
+                textField.keyboardType = UIKeyboardType.NumberPad
+                textField.text = String(HDPhoneMonitor.MINUTES_PER_INTERVAL)
+            })
+            let actionCancel = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+            let actionOK = UIAlertAction(title: "OK", style: .Default, handler: { (action: UIAlertAction) in
+                let newValue = view.textFields?.first?.text!
+                if HDPhoneMonitor.canChangeMinutesPerInterval(Int(newValue!)!) {
+                    self.INTERVALS = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
+                    self.removeView()
+                    self.initVariable()
+                    self.initControls()
+                    self.initView()
+                    self.loadData(self.day)
+                } else {
+                    self.presentViewController(view, animated: true, completion: nil)
+                }
+            })
+            view.addAction(actionCancel)
+            view.addAction(actionOK)
+            self.presentViewController(view, animated: true, completion: nil)
+        }
         let actionCancel = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         if isShowConnectionChart {
             settingsView.addAction(actionHideConnectionChart)
@@ -155,6 +181,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
             settingsView.addAction(actionShowConnectionChart)
         }
         settingsView.addAction(actionSync)
+        settingsView.addAction(actionChangeInterval)
         settingsView.addAction(actionCancel)
     }
     
@@ -209,13 +236,19 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         let predicate = NSPredicate(format: "date >= %@ && date <= %@", startDay, endDay)
         
         let realm = try! Realm()
-        let data = realm.objects(MonitoringData.self).filter(predicate).sorted("date", ascending: true)
+        mdata = realm.objects(MonitoringData.self).filter(predicate).sorted("date", ascending: true)
         
-        if data.count <= 0 {
+        if mdata!.count <= 0 {
             return false
         }
         
-        for log in data {
+        adaptMonitoringData()
+        
+        return true
+    }
+    
+    func adaptMonitoringData() {
+        for log in mdata! {
             if log.interval() > maxInterval {
                 maxInterval = log.interval()
             }
@@ -225,12 +258,12 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         phoneData = [MonitoringData](count: maxInterval + 1, repeatedValue: MonitoringData())
         isCharging = [Bool](count: maxInterval + 1, repeatedValue: false)
         
-        for index in 0 ..< data.count {
-            let i = data.count - 1 - index
-            phoneData[data[i].interval()] = data[i]
+        for index in 0 ..< mdata!.count {
+            let i = mdata!.count - 1 - index
+            phoneData[mdata![i].interval()] = mdata![i]
             
-            if data[index].chargingStatus {
-                let interval = data[index].interval()
+            if mdata![index].chargingStatus {
+                let interval = mdata![index].interval()
                 isCharging[interval] = true
             }
         }
@@ -256,8 +289,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
                 }
             }
         }
-        
-        return true
+
     }
     
     func loadConnectionData(day: String) -> Bool {
@@ -271,19 +303,28 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         let endDay:NSDate = dateFormatter.dateFromString("\(self.day) 23:23:59")!
         let realm = try! Realm()
         let cpredicate = NSPredicate(format: "date >= %@ && date <= %@ && status = 'Disconnected'", startDay, endDay)
-        let cdata = realm.objects(ConnectionData.self).filter(cpredicate).sorted("date", ascending: true)
+        cdata = realm.objects(ConnectionData.self).filter(cpredicate).sorted("date", ascending: true)
         
-        if cdata.count <= 0 {
+        
+        
+        if cdata!.count <= 0 {
             return false
         }
         
-        connectionData.removeAll()
-        connectionData = [Int](count: maxInterval + 1, repeatedValue: 0)
-        for log in cdata {
-            connectionData[log.interval()] += 1
-        }
+        adaptConnectionData()
+        
         
         return true
+    }
+    
+    func adaptConnectionData() {
+        if cdata != nil && cdata!.count > 0 {
+            connectionData.removeAll()
+            connectionData = [Int](count: maxInterval + 1, repeatedValue: 0)
+            for log in cdata! {
+                connectionData[log.interval()] += 1
+            }
+        }
     }
     
     func loadData(day: String) {
@@ -477,7 +518,7 @@ extension HDPhoneMonitorChartViewController: GoogleSheetServiceDelegate {
         else {
             // sync
             //SVProgressHUD.showSuccessWithStatus("Created spreadsheet")
-            GoogleSheetService.spreadsheetId = object.JSON["spreadsheetId"]! as! String
+            GoogleSheetService.spreadsheetId = object.JSON["spreadsheetId"]! as? String
             userDefault.setValue(object.JSON["spreadsheetId"]!, forKey: "spreadsheetId")
             userDefault.synchronize()
             self.sync()

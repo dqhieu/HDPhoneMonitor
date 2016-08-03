@@ -15,15 +15,15 @@ import GTMOAuth2
 class GoogleSheetService: NSObject {
 
     //MARK: - Google Sheet API Variables
-    public static let kKeychainItemName = "HDPhoneMonitor Client ID"
-    public static let kClientID = "558527852240-40dp6ohf8ut1qshcsp7nu09nesr7ql3h.apps.googleusercontent.com"
-    public static let scopes = ["https://www.googleapis.com/auth/spreadsheets"]
-    public static var spreadsheetId:String?
+    static let kKeychainItemName = "HDPhoneMonitor Client ID"
+    static let kClientID = "558527852240-40dp6ohf8ut1qshcsp7nu09nesr7ql3h.apps.googleusercontent.com"
+    static let scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+    static var spreadsheetId:String?
     var service:GTLService?
     let baseUrl = "https://sheets.googleapis.com/v4/spreadsheets"
     weak var delegate:GoogleSheetServiceDelegate?
     
-    public class var sharedService: GoogleSheetService {
+    class var sharedService: GoogleSheetService {
         struct Static {
             static var onceToken: dispatch_once_t = 0
             

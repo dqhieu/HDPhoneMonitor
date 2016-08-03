@@ -19,7 +19,7 @@ class MonitoringData: Object {
     dynamic var date: NSDate = NSDate()
     
     //MARK: - Functions
-    public func interval() -> Int {
+    func interval() -> Int {
         return HDPhoneMonitor.minuteIndexInDay(date) / HDPhoneMonitor.MINUTES_PER_INTERVAL
     }
 }
@@ -32,7 +32,7 @@ class ConnectionData: Object {
     dynamic var date: NSDate = NSDate()
     
     //MARK: - Functions
-    public func interval() -> Int {
+    func interval() -> Int {
         return HDPhoneMonitor.minuteIndexInDay(date) / HDPhoneMonitor.MINUTES_PER_INTERVAL
     }
 }
@@ -49,7 +49,7 @@ public class HDPhoneMonitor: NSObject {
     
     // Replace 5 by value in [5,720] if you want change interval
     // Make sure that 5 is minimum value for best performance and 720 is the max value because 1440/720 = 2 is the minimum number of point to draw graph :)
-    public static let MINUTES_PER_INTERVAL = 30
+    public static var MINUTES_PER_INTERVAL = 30
     
     public static let MAX_MINUTE_A_DAY = 1440
     
@@ -79,7 +79,7 @@ public class HDPhoneMonitor: NSObject {
     public static func enableCloudStorage() {
         let _ = GoogleSheetService.sharedService
         if sharedService.userDefault.valueForKey("spreadsheetId") != nil {
-            GoogleSheetService.spreadsheetId = sharedService.userDefault.valueForKey("spreadsheetId") as! String
+            GoogleSheetService.spreadsheetId = sharedService.userDefault.valueForKey("spreadsheetId") as? String
         }
     }
     
@@ -169,5 +169,13 @@ public class HDPhoneMonitor: NSObject {
         } else {
             return -1
         }
+    }
+    
+    static func canChangeMinutesPerInterval(newValue: Int) -> Bool {
+        if newValue >= 5 && newValue <= 720 {
+            MINUTES_PER_INTERVAL = newValue
+            return true
+        }
+        return false
     }
 }
