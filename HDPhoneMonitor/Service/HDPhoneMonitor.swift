@@ -74,6 +74,9 @@ public class HDPhoneMonitor: NSObject {
     public static func startService() {
         UIDevice.currentDevice().batteryMonitoringEnabled = true
         let _ = HDPhoneMonitor.sharedService
+        if sharedService.userDefault.valueForKey("minutesPerInterval") != nil {
+            MINUTES_PER_INTERVAL = sharedService.userDefault.valueForKey("minutesPerInterval") as! Int
+        }
     }
     
     public static func enableCloudStorage() {
@@ -174,6 +177,8 @@ public class HDPhoneMonitor: NSObject {
     static func canChangeMinutesPerInterval(newValue: Int) -> Bool {
         if newValue >= 5 && newValue <= 720 {
             MINUTES_PER_INTERVAL = newValue
+            sharedService.userDefault.setValue(MINUTES_PER_INTERVAL, forKey: "minutesPerInterval")
+            sharedService.userDefault.synchronize()
             return true
         }
         return false
