@@ -40,7 +40,7 @@ public class HDPhoneMonitorChartViewController: UIViewController {
     var chartLeftMargin:CGFloat         = 20
     
     var maxInterval:Int = -1
-    var INTERVALS = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
+    var INTERVALS:CGFloat = 1
     
     let userDefault = NSUserDefaults()
     
@@ -163,6 +163,8 @@ public class HDPhoneMonitorChartViewController: UIViewController {
         if userDefault.valueForKey("isShowConnectionChart") != nil {
             isShowConnectionChart = userDefault.valueForKey("isShowConnectionChart") as! Bool
         }
+        
+        INTERVALS = CGFloat(HDPhoneMonitor.MAX_MINUTE_A_DAY / HDPhoneMonitor.MINUTES_PER_INTERVAL)
     }
     
     func initNavigationButton() {
